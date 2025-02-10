@@ -50,4 +50,7 @@ $app->group('/api', function ($group) use ($appContainer) {
     $group
         ->patch('/users/name/update/{by}', [$userController, 'updateName'])
         ->add($userAuthorizedMiddleware);
+    $group
+        ->patch('/users/username/update/{by}', [$userController, 'updateUsername'])
+        ->add($userAuthorizedMiddleware);
 });

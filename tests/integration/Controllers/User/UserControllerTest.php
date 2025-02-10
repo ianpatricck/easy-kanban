@@ -268,4 +268,34 @@ final class UserControllerTest extends TestCase
             ]), $updated->getBody()->getContents()
         );
     }
+
+    public function testShouldUpdateUsername(): void
+    {
+        // Authenticate user
+        $body = [
+            'email' => 'newemail@mail.com',
+            'password' => 'mypassword321'
+        ];
+
+        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $authenticated = json_decode($response->getBody()->getContents());
+
+        // Update email
+        $username = 'guest';
+        $updateData = ['username' => '_newusername'];
+
+        $updated = $this->client->request('PATCH', "/api/users/username/update/{$username}", [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $authenticated->token
+            ],
+            'json' => $updateData
+        ]);
+
+        $this->assertSame(
+            json_encode([
+                'message' => 'Username was updated successfully'
+            ]), $updated->getBody()->getContents()
+        );
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Usecases\User;
 
 use App\Data\Repositories\UserRepository;
+use Exception;
 
 class DeleteUserUsecase
 {
@@ -10,14 +11,20 @@ class DeleteUserUsecase
         protected UserRepository $userRepository
     ) {}
 
-    public function execute(int $id): void
+    public function execute(string|int $by): void
     {
-        $user = $this->userRepository->findOneById($id);
+        $user = null;
 
-        if (!$user) {
-            throw new \Exception('User not found', 404);
+        if (gettype($by) == 'int') {
+            $user = $this->userRepository->findOneById($by);
+        } else if (gettype($by) == 'string') {
+            $user = $this->userRepository->findOneByUsername($by);
         }
 
-        $this->userRepository->delete($id);
+        if (!$user) {
+            throw new Exception('User not found', 404);
+        }
+
+        $this->userRepository->delete($user->getId());
     }
 }

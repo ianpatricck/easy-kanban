@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 
 use App\DTO\CreateUserDTO;
-use App\Entities\User;
 use App\Usecases\User\CreateUserUsecase;
 use App\Usecases\User\DeleteUserUsecase;
 use App\Usecases\User\FindUserUsecase;
@@ -10,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 final class DeleteUserUsecaseTest extends TestCase
 {
     private static PDO $pdo;
-    private static ?User $user;
 
     public function setUp(): void
     {
@@ -34,11 +32,6 @@ final class DeleteUserUsecaseTest extends TestCase
         $createUserContainer = new DI\Container();
         $createUserUsecase = $createUserContainer->get(CreateUserUsecase::class);
         $createUserUsecase->execute($createUserDTO);
-
-        $findUserContainer = new DI\Container();
-        $findUserUsecase = $findUserContainer->get(FindUserUsecase::class);
-
-        self::$user = $findUserUsecase->execute($createUserDTO->username);
     }
 
     public static function tearDownAfterClass(): void
@@ -65,7 +58,8 @@ final class DeleteUserUsecaseTest extends TestCase
         $deleteUserContainer = new DI\Container();
         $deleteUserUsecase = $deleteUserContainer->get(DeleteUserUsecase::class);
 
-        $deleteUserUsecase->execute(self::$user->getId());
+        $username = 'guest';
+        $deleteUserUsecase->execute($username);
 
         $findUserContainer = new DI\Container();
         $findUserUsecase = $findUserContainer->get(FindUserUsecase::class);
@@ -74,6 +68,6 @@ final class DeleteUserUsecaseTest extends TestCase
         $this->expectExceptionMessage('User not found');
         $this->expectExceptionCode(404);
 
-        $findUserUsecase->execute(self::$user->getUsername());
+        $findUserUsecase->execute($username);
     }
 }

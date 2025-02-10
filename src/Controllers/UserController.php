@@ -12,6 +12,7 @@ use App\Usecases\User\AuthenticateUserUsecase;
 use App\Usecases\User\CreateUserUsecase;
 use App\Usecases\User\FindUserUsecase;
 use App\Usecases\User\UpdateEmailUsecase;
+use App\Usecases\User\UpdateNameUsecase;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Exception;
@@ -22,7 +23,8 @@ class UserController
         private CreateUserUsecase $createUserUsecase,
         private FindUserUsecase $findUserUsecase,
         private AuthenticateUserUsecase $authenticateUserUsecase,
-        private UpdateEmailUsecase $updateEmailUsecase
+        private UpdateEmailUsecase $updateEmailUsecase,
+        private UpdateNameUsecase $updateNameUsecase
     ) {}
 
     /*
@@ -148,7 +150,39 @@ class UserController
 
             $response->getBody()->write(
                 json_encode([
-                    'message' => 'Email updated successfully'
+                    'message' => 'Email was updated successfully'
+                ])
+            );
+
+            return $response->withStatus(200);
+        } catch (Exception $exception) {
+            $response->getBody()->write(
+                json_encode([
+                    'message' => $exception->getMessage()
+                ])
+            );
+
+            return $response->withStatus($exception->getCode());
+        }
+    }
+
+    /*
+     * Método para atualização do nome do usuário
+     *
+     * @param Request $request
+     * @param Response $response
+     *
+     * return Response
+     */
+    public function updateName(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $body = $request->getParsedBody();
+            $this->updateNameUsecase->execute($args['by'], $body['name']);
+
+            $response->getBody()->write(
+                json_encode([
+                    'message' => 'Name was updated successfully'
                 ])
             );
 

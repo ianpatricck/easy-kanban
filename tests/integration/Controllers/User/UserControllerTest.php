@@ -153,7 +153,7 @@ final class UserControllerTest extends TestCase
 
         $this->client->request(
             'GET',
-            "/api/users/find-one/{$username}",
+            "/api/users/{$username}",
         );
     }
 
@@ -177,7 +177,7 @@ final class UserControllerTest extends TestCase
         $this->expectExceptionMessage('Invalid authenticated user');
         $this->expectExceptionCode(401);
 
-        $this->client->request('GET', "/api/users/find-one/{$username}", [
+        $this->client->request('GET', "/api/users/{$username}", [
             'headers' => [
                 'Authorization' => 'Bearer ' . $authenticated->token . 'wrong token lol :)'
             ]
@@ -200,7 +200,7 @@ final class UserControllerTest extends TestCase
 
         $username = 'guest';
 
-        $user = $this->client->request('GET', "/api/users/find-one/{$username}", [
+        $user = $this->client->request('GET', "/api/users/{$username}", [
             'headers' => [
                 'Authorization' => 'Bearer ' . $authenticated->token
             ]
@@ -234,7 +234,37 @@ final class UserControllerTest extends TestCase
 
         $this->assertSame(
             json_encode([
-                'message' => 'Email updated successfully'
+                'message' => 'Email was updated successfully'
+            ]), $updated->getBody()->getContents()
+        );
+    }
+
+    public function testShouldUpdateName(): void
+    {
+        // Authenticate user
+        $body = [
+            'email' => 'newemail@mail.com',
+            'password' => 'mypassword321'
+        ];
+
+        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $authenticated = json_decode($response->getBody()->getContents());
+
+        // Update email
+        $username = 'guest';
+        $updateData = ['name' => 'new name'];
+
+        $updated = $this->client->request('PATCH', "/api/users/name/update/{$username}", [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $authenticated->token
+            ],
+            'json' => $updateData
+        ]);
+
+        $this->assertSame(
+            json_encode([
+                'message' => 'Name was updated successfully'
             ]), $updated->getBody()->getContents()
         );
     }

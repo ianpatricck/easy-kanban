@@ -23,6 +23,6 @@ $app->add(TwigMiddleware::create($app, $twig));
 $app->group('/', function ($group) use ($appContainer) {
     $group->get('', function (Request $request, Response $response) {
         $view = Twig::fromRequest($request);
-        return $view->render($response, 'home.html.twig');
+        return $view->render($response, 'home.twig');
     });
 });

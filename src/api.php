@@ -42,7 +42,7 @@ $app->group('/api', function ($group) use ($appContainer) {
     $group->post('/users/create', [$userController, 'create']);
     $group->post('/users/login', [$userController, 'login']);
     $group
-        ->get('/users/find-one/{by}', [$userController, 'findOne'])
+        ->get('/users/{by}', [$userController, 'findOne'])
         ->add($userAuthorizedMiddleware);
     $group
         ->patch('/users/email/update/{by}', [$userController, 'updateEmail'])

@@ -2,5 +2,5 @@ vendor/
 node_modules/
 .twig-cs-fixer.cache
 .phpunit.result.cache
-.development.db
+development.db
 .env

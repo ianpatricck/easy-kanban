@@ -13,6 +13,7 @@ use App\Usecases\User\CreateUserUsecase;
 use App\Usecases\User\FindUserUsecase;
 use App\Usecases\User\UpdateEmailUsecase;
 use App\Usecases\User\UpdateNameUsecase;
+use App\Usecases\User\UpdateUserBioUsecase;
 use App\Usecases\User\UpdateUsernameUsecase;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -26,7 +27,8 @@ class UserController
         private AuthenticateUserUsecase $authenticateUserUsecase,
         private UpdateEmailUsecase $updateEmailUsecase,
         private UpdateNameUsecase $updateNameUsecase,
-        private UpdateUsernameUsecase $updateUsernameUsecase
+        private UpdateUsernameUsecase $updateUsernameUsecase,
+        private UpdateUserBioUsecase $updateUserBioUsecase
     ) {}
 
     /*
@@ -201,7 +203,7 @@ class UserController
     }
 
     /*
-     * Método para atualização do nome do usuário
+     * Método para atualização do apelido do usuário
      *
      * @param Request $request
      * @param Response $response
@@ -217,6 +219,38 @@ class UserController
             $response->getBody()->write(
                 json_encode([
                     'message' => 'Username was updated successfully'
+                ])
+            );
+
+            return $response->withStatus(200);
+        } catch (Exception $exception) {
+            $response->getBody()->write(
+                json_encode([
+                    'message' => $exception->getMessage()
+                ])
+            );
+
+            return $response->withStatus($exception->getCode());
+        }
+    }
+
+    /*
+     * Método para atualização da descrição do usuário
+     *
+     * @param Request $request
+     * @param Response $response
+     *
+     * return Response
+     */
+    public function updateBio(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $body = $request->getParsedBody();
+            $this->updateUserBioUsecase->execute($args['by'], $body['bio']);
+
+            $response->getBody()->write(
+                json_encode([
+                    'message' => 'User description was updated successfully'
                 ])
             );
 

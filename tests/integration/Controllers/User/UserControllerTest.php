@@ -250,7 +250,7 @@ final class UserControllerTest extends TestCase
         $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
         $authenticated = json_decode($response->getBody()->getContents());
 
-        // Update email
+        // Update name
         $username = 'guest';
         $updateData = ['name' => 'new name'];
 
@@ -280,7 +280,7 @@ final class UserControllerTest extends TestCase
         $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
         $authenticated = json_decode($response->getBody()->getContents());
 
-        // Update email
+        // Update username
         $username = 'guest';
         $updateData = ['username' => '_newusername'];
 
@@ -295,6 +295,36 @@ final class UserControllerTest extends TestCase
         $this->assertSame(
             json_encode([
                 'message' => 'Username was updated successfully'
+            ]), $updated->getBody()->getContents()
+        );
+    }
+
+    public function testShouldUpdateBio(): void
+    {
+        // Authenticate user
+        $body = [
+            'email' => 'newemail@mail.com',
+            'password' => 'mypassword321'
+        ];
+
+        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $authenticated = json_decode($response->getBody()->getContents());
+
+        // Update description
+        $username = '_newusername';
+        $updateData = ['bio' => 'Another description'];
+
+        $updated = $this->client->request('PATCH', "/api/users/description/update/{$username}", [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $authenticated->token
+            ],
+            'json' => $updateData
+        ]);
+
+        $this->assertSame(
+            json_encode([
+                'message' => 'User description was updated successfully'
             ]), $updated->getBody()->getContents()
         );
     }

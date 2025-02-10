@@ -13,6 +13,7 @@ use App\Usecases\User\CreateUserUsecase;
 use App\Usecases\User\FindUserUsecase;
 use App\Usecases\User\UpdateEmailUsecase;
 use App\Usecases\User\UpdateNameUsecase;
+use App\Usecases\User\UpdatePasswordUsecase;
 use App\Usecases\User\UpdateUserBioUsecase;
 use App\Usecases\User\UpdateUsernameUsecase;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -28,7 +29,8 @@ class UserController
         private UpdateEmailUsecase $updateEmailUsecase,
         private UpdateNameUsecase $updateNameUsecase,
         private UpdateUsernameUsecase $updateUsernameUsecase,
-        private UpdateUserBioUsecase $updateUserBioUsecase
+        private UpdateUserBioUsecase $updateUserBioUsecase,
+        private UpdatePasswordUsecase $updatePasswordUsecase
     ) {}
 
     /*
@@ -251,6 +253,38 @@ class UserController
             $response->getBody()->write(
                 json_encode([
                     'message' => 'User description was updated successfully'
+                ])
+            );
+
+            return $response->withStatus(200);
+        } catch (Exception $exception) {
+            $response->getBody()->write(
+                json_encode([
+                    'message' => $exception->getMessage()
+                ])
+            );
+
+            return $response->withStatus($exception->getCode());
+        }
+    }
+
+    /*
+     * Método para atualização da senha
+     *
+     * @param Request $request
+     * @param Response $response
+     *
+     * return Response
+     */
+    public function updatePassword(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $body = $request->getParsedBody();
+            $this->updatePasswordUsecase->execute($args['by'], $body['old_password'], $body['new_password']);
+
+            $response->getBody()->write(
+                json_encode([
+                    'message' => 'Password was updated successfully'
                 ])
             );
 

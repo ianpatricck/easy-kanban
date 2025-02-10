@@ -328,4 +328,37 @@ final class UserControllerTest extends TestCase
             ]), $updated->getBody()->getContents()
         );
     }
+
+    public function testShouldUpdatePassword(): void
+    {
+        // Authenticate user
+        $body = [
+            'email' => 'newemail@mail.com',
+            'password' => 'mypassword321'
+        ];
+
+        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $authenticated = json_decode($response->getBody()->getContents());
+
+        // Update password
+        $username = '_newusername';
+        $updateData = [
+            'old_password' => 'mypassword321',
+            'new_password' => 'mynewpassword123'
+        ];
+
+        $updated = $this->client->request('PATCH', "/api/users/password/update/{$username}", [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $authenticated->token
+            ],
+            'json' => $updateData
+        ]);
+
+        $this->assertSame(
+            json_encode([
+                'message' => 'Password was updated successfully'
+            ]), $updated->getBody()->getContents()
+        );
+    }
 }

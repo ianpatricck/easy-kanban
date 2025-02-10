@@ -86,10 +86,10 @@ class UserRepository
         $this->userDAO->execute($query, [$updatedEmail, $id]);
     }
 
-    public function updatePassword(string $username, string $newPassword): void
+    public function updatePassword(int $id, string $newPassword): void
     {
-        $query = 'UPDATE users SET password = ? WHERE username = ?';
-        $this->userDAO->execute($query, [$newPassword, $username]);
+        $query = 'UPDATE users SET password = ? WHERE id = ?';
+        $this->userDAO->execute($query, [$newPassword, $id]);
     }
 
     public function updateDescription(string $username, string $bio): void

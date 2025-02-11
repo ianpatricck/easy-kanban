@@ -10,6 +10,7 @@ use App\DTO\AuthenticateUserDTO;
 use App\DTO\CreateUserDTO;
 use App\Usecases\User\AuthenticateUserUsecase;
 use App\Usecases\User\CreateUserUsecase;
+use App\Usecases\User\DeleteUserUsecase;
 use App\Usecases\User\FindUserUsecase;
 use App\Usecases\User\UpdateEmailUsecase;
 use App\Usecases\User\UpdateNameUsecase;
@@ -30,7 +31,8 @@ class UserController
         private UpdateNameUsecase $updateNameUsecase,
         private UpdateUsernameUsecase $updateUsernameUsecase,
         private UpdateUserBioUsecase $updateUserBioUsecase,
-        private UpdatePasswordUsecase $updatePasswordUsecase
+        private UpdatePasswordUsecase $updatePasswordUsecase,
+        private DeleteUserUsecase $deleteUserUsecase
     ) {}
 
     /*
@@ -285,6 +287,38 @@ class UserController
             $response->getBody()->write(
                 json_encode([
                     'message' => 'Password was updated successfully'
+                ])
+            );
+
+            return $response->withStatus(200);
+        } catch (Exception $exception) {
+            $response->getBody()->write(
+                json_encode([
+                    'message' => $exception->getMessage()
+                ])
+            );
+
+            return $response->withStatus($exception->getCode());
+        }
+    }
+
+    /*
+     * Método para deletar um usuário
+     *
+     * @param Request $request
+     * @param Response $response
+     *
+     * return Response
+     */
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $body = $request->getParsedBody();
+            $this->deleteUserUsecase->execute($args['by']);
+
+            $response->getBody()->write(
+                json_encode([
+                    'message' => 'User was deleted successfully'
                 ])
             );
 

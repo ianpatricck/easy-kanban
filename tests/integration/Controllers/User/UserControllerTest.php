@@ -224,7 +224,7 @@ final class UserControllerTest extends TestCase
         $username = 'guest';
         $updateData = ['email' => 'newemail@mail.com'];
 
-        $updated = $this->client->request('PATCH', "/api/users/email/update/{$username}", [
+        $updated = $this->client->request('PATCH', "/api/users/email/{$username}", [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $authenticated->token
@@ -254,7 +254,7 @@ final class UserControllerTest extends TestCase
         $username = 'guest';
         $updateData = ['name' => 'new name'];
 
-        $updated = $this->client->request('PATCH', "/api/users/name/update/{$username}", [
+        $updated = $this->client->request('PATCH', "/api/users/name/{$username}", [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $authenticated->token
@@ -284,7 +284,7 @@ final class UserControllerTest extends TestCase
         $username = 'guest';
         $updateData = ['username' => '_newusername'];
 
-        $updated = $this->client->request('PATCH', "/api/users/username/update/{$username}", [
+        $updated = $this->client->request('PATCH', "/api/users/username/{$username}", [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $authenticated->token
@@ -314,7 +314,7 @@ final class UserControllerTest extends TestCase
         $username = '_newusername';
         $updateData = ['bio' => 'Another description'];
 
-        $updated = $this->client->request('PATCH', "/api/users/description/update/{$username}", [
+        $updated = $this->client->request('PATCH', "/api/users/description/{$username}", [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $authenticated->token
@@ -347,7 +347,7 @@ final class UserControllerTest extends TestCase
             'new_password' => 'mynewpassword123'
         ];
 
-        $updated = $this->client->request('PATCH', "/api/users/password/update/{$username}", [
+        $updated = $this->client->request('PATCH', "/api/users/password/{$username}", [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $authenticated->token
@@ -358,6 +358,32 @@ final class UserControllerTest extends TestCase
         $this->assertSame(
             json_encode([
                 'message' => 'Password was updated successfully'
+            ]), $updated->getBody()->getContents()
+        );
+    }
+
+    public function testShouldDeleteAnUser(): void
+    {
+        // Authenticate user
+        $body = [
+            'email' => 'newemail@mail.com',
+            'password' => 'mynewpassword123'
+        ];
+
+        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $authenticated = json_decode($response->getBody()->getContents());
+
+        $username = '_newusername';
+        $updated = $this->client->request('DELETE', "/api/users/{$username}", [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $authenticated->token
+            ],
+        ]);
+
+        $this->assertSame(
+            json_encode([
+                'message' => 'User was deleted successfully'
             ]), $updated->getBody()->getContents()
         );
     }

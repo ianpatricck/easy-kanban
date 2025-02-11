@@ -38,25 +38,31 @@ $app->group('/api', function ($group) use ($appContainer) {
         return $response->withHeader('Content-Type', 'application/json');
     };
 
-    $group->get('', $welcomeMessageCallback);
-    $group->post('/users/create', [$userController, 'create']);
-    $group->post('/users/login', [$userController, 'login']);
+    $group
+        ->get('', $welcomeMessageCallback);
+    $group
+        ->post('/users/create', [$userController, 'create']);
+    $group
+        ->post('/users/login', [$userController, 'login']);
     $group
         ->get('/users/{by}', [$userController, 'findOne'])
         ->add($userAuthorizedMiddleware);
     $group
-        ->patch('/users/email/update/{by}', [$userController, 'updateEmail'])
+        ->patch('/users/email/{by}', [$userController, 'updateEmail'])
         ->add($userAuthorizedMiddleware);
     $group
-        ->patch('/users/name/update/{by}', [$userController, 'updateName'])
+        ->patch('/users/name/{by}', [$userController, 'updateName'])
         ->add($userAuthorizedMiddleware);
     $group
-        ->patch('/users/username/update/{by}', [$userController, 'updateUsername'])
+        ->patch('/users/username/{by}', [$userController, 'updateUsername'])
         ->add($userAuthorizedMiddleware);
     $group
-        ->patch('/users/description/update/{by}', [$userController, 'updateBio'])
+        ->patch('/users/description/{by}', [$userController, 'updateBio'])
         ->add($userAuthorizedMiddleware);
     $group
-        ->patch('/users/password/update/{by}', [$userController, 'updatePassword'])
+        ->patch('/users/password/{by}', [$userController, 'updatePassword'])
+        ->add($userAuthorizedMiddleware);
+    $group
+        ->delete('/users/{by}', [$userController, 'delete'])
         ->add($userAuthorizedMiddleware);
 });

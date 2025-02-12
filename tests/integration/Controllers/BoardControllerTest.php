@@ -123,4 +123,66 @@ final class BoardControllerTest extends TestCase
 
         $this->assertSame(201, $created->getStatusCode());
     }
+
+    public function testThrowsNameWasNotProvidedException(): void
+    {
+        // Get user data
+        $response = $this->client->request('GET', '/api/users/guest', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->authToken
+            ]
+        ]);
+
+        $owner = json_decode($response->getBody()->getContents());
+
+        $boardPayload = [
+            'name' => '',
+            'owner' => $owner->id,
+            'description' => 'Welcome, this is my second board',
+        ];
+
+        // Create a board
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("The board's name was not provided");
+        $this->expectExceptionCode(400);
+
+        $this->client->request('POST', '/api/boards/create', [
+            'json' => $boardPayload,
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->authToken
+            ]
+        ]);
+    }
+
+    public function testThrowsOwnerUnauthorizedException(): void
+    {
+        // Get user data
+        $response = $this->client->request('GET', '/api/users/guest', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->authToken
+            ]
+        ]);
+
+        $owner = json_decode($response->getBody()->getContents());
+
+        $boardPayload = [
+            'name' => 'My second board',
+            'owner' => $owner->id + 5,
+            'description' => 'Welcome, this is my second board',
+        ];
+
+        // Create a board
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('User unauthorized');
+        $this->expectExceptionCode(400);
+
+        $this->client->request('POST', '/api/boards/create', [
+            'json' => $boardPayload,
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->authToken
+            ]
+        ]);
+    }
 }

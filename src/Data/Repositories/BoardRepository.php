@@ -45,4 +45,10 @@ class BoardRepository
 
         $this->boardDAO->execute($query, $values);
     }
+
+    public function delete(int $id): void
+    {
+        $query = 'DELETE FROM boards WHERE id = ?';
+        $this->boardDAO->execute($query, [$id]);
+    }
 }

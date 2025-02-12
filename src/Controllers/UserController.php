@@ -313,7 +313,6 @@ class UserController
     public function delete(Request $request, Response $response, array $args): Response
     {
         try {
-            $body = $request->getParsedBody();
             $this->deleteUserUsecase->execute($args['by']);
 
             $response->getBody()->write(

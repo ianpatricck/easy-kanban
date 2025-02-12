@@ -4,6 +4,7 @@ namespace App\Usecases\Board;
 
 use App\Data\Repositories\BoardRepository;
 use App\DTO\CreateBoardDTO;
+use Exception;
 
 class CreateBoardUsecase
 {
@@ -16,7 +17,7 @@ class CreateBoardUsecase
         $name = $createBoardDTO->name;
 
         if (!isset($name) || !(strlen(trim($name)) > 0)) {
-            throw new \InvalidArgumentException("The board's name was not provided", 400);
+            throw new Exception("The board's name was not provided", 400);
         }
 
         $this->boardRepository->create($createBoardDTO);

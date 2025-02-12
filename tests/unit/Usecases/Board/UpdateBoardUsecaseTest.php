@@ -93,7 +93,7 @@ final class UpdateBoardUsecaseTest extends TestCase
             description: 'My board description'
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage("The board's name cannot be empty");
         $this->expectExceptionCode(400);
 
@@ -112,7 +112,7 @@ final class UpdateBoardUsecaseTest extends TestCase
             description: 'My board description'
         );
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage("Board's owner not found");
         $this->expectExceptionCode(404);
 
@@ -131,7 +131,7 @@ final class UpdateBoardUsecaseTest extends TestCase
             description: 'My board description'
         );
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Board not found');
         $this->expectExceptionCode(404);
 

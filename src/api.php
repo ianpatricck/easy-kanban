@@ -4,6 +4,7 @@
 // | Rotas da API da aplicação                  |
 // |============================================|
 
+use App\Controllers\BoardController;
 use App\Controllers\UserController;
 use App\Middlewares\UserAuthorizedMiddleware;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -16,8 +17,10 @@ use Slim\Psr7\Factory\ResponseFactory;
  *
  * @return void
  */
-$app->group('/api', function ($group) use ($appContainer) {
+$app->group('/api', function ($api) use ($appContainer) {
+    // Controllers
     $userController = $appContainer->get(UserController::class);
+    $boardController = $appContainer->get(BoardController::class);
 
     /*
      * Middleware para verificar a autenticidade do usuário.
@@ -38,31 +41,33 @@ $app->group('/api', function ($group) use ($appContainer) {
         return $response->withHeader('Content-Type', 'application/json');
     };
 
-    $group
-        ->get('', $welcomeMessageCallback);
-    $group
-        ->post('/users/create', [$userController, 'create']);
-    $group
-        ->post('/users/login', [$userController, 'login']);
-    $group
+    $api->get('', $welcomeMessageCallback);
+
+    // Users
+    $api->post('/users/create', [$userController, 'create']);
+    $api->post('/users/login', [$userController, 'login']);
+    $api
         ->get('/users/{by}', [$userController, 'findOne'])
         ->add($userAuthorizedMiddleware);
-    $group
+    $api
         ->patch('/users/email/{by}', [$userController, 'updateEmail'])
         ->add($userAuthorizedMiddleware);
-    $group
+    $api
         ->patch('/users/name/{by}', [$userController, 'updateName'])
         ->add($userAuthorizedMiddleware);
-    $group
+    $api
         ->patch('/users/username/{by}', [$userController, 'updateUsername'])
         ->add($userAuthorizedMiddleware);
-    $group
+    $api
         ->patch('/users/description/{by}', [$userController, 'updateBio'])
         ->add($userAuthorizedMiddleware);
-    $group
+    $api
         ->patch('/users/password/{by}', [$userController, 'updatePassword'])
         ->add($userAuthorizedMiddleware);
-    $group
+    $api
         ->delete('/users/{by}', [$userController, 'delete'])
         ->add($userAuthorizedMiddleware);
+
+    // Boards
+    $api->post('/boards/create', [$boardController, 'create'])->add($userAuthorizedMiddleware);
 });

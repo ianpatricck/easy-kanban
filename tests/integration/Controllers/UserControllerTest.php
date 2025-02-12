@@ -4,7 +4,7 @@ use Dotenv\Dotenv;
 use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
 
-$dotenv = Dotenv::createImmutable(dirname(__FILE__, 5));
+$dotenv = Dotenv::createImmutable(dirname(__FILE__, 4));
 $dotenv->load();
 
 final class UserControllerTest extends TestCase

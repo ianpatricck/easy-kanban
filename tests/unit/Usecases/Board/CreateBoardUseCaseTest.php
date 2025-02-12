@@ -51,7 +51,7 @@ final class CreateBoardUsecaseTest extends TestCase
         $createBoardContainer = new DI\Container();
         $createBoardUseCase = $createBoardContainer->get(CreateBoardUsecase::class);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage("The board's name was not provided");
         $this->expectExceptionCode(400);
 

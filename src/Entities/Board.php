@@ -29,13 +29,23 @@ class Board
         return $this->description;
     }
 
+    public function getActiveUsers(): int
+    {
+        return $this->active_users;
+    }
+
     public function getOwner(): int
     {
         return $this->owner;
     }
 
-    public function getActiveUsers(): int
+    public function getCreatedAt(): string
     {
-        return $this->active_users;
+        return $this->created_at;
+    }
+
+    public function getUpdatedAt(): string
+    {
+        return $this->updated_at;
     }
 }

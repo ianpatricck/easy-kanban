@@ -9,12 +9,12 @@ $dotenv->load();
 
 final class UserControllerTest extends TestCase
 {
-    private Client $client;
+    private static Client $client;
 
-    public function setUp(): void
+    public static function setUpBeforeClass(): void
     {
         error_reporting(E_ALL);
-        $this->client = new Client(
+        self::$client = new Client(
             [
                 'base_uri' => $_ENV['APP_URL'],
                 'timeout' => 2.0,
@@ -46,7 +46,7 @@ final class UserControllerTest extends TestCase
         $this->expectExceptionMessage('Email format is not valid');
         $this->expectExceptionCode(400);
 
-        $this->client->request('POST', '/api/users/create', ['json' => $body]);
+        static::$client->request('POST', '/api/users/create', ['json' => $body]);
     }
 
     public function testThrowsAnInvalidPasswordFormatException(): void
@@ -62,7 +62,7 @@ final class UserControllerTest extends TestCase
         $this->expectExceptionMessage('Password must be greater than 8 characters');
         $this->expectExceptionCode(400);
 
-        $this->client->request('POST', '/api/users/create', ['json' => $body]);
+        static::$client->request('POST', '/api/users/create', ['json' => $body]);
     }
 
     public function testShouldCreateAnUser(): void
@@ -74,7 +74,7 @@ final class UserControllerTest extends TestCase
             'password' => 'mypassword321'
         ];
 
-        $created = $this->client->request('POST', '/api/users/create', ['json' => $body]);
+        $created = static::$client->request('POST', '/api/users/create', ['json' => $body]);
 
         $this->assertSame(
             json_encode(['message' => 'User created successfully']),
@@ -97,7 +97,7 @@ final class UserControllerTest extends TestCase
         $this->expectExceptionMessage('The username is already in use');
         $this->expectExceptionCode(400);
 
-        $this->client->request('POST', '/api/users/create', ['json' => $body]);
+        static::$client->request('POST', '/api/users/create', ['json' => $body]);
     }
 
     public function testThrowsANotFoundAccountException(): void
@@ -111,7 +111,7 @@ final class UserControllerTest extends TestCase
         $this->expectExceptionMessage("This account doesn't exist");
         $this->expectExceptionCode(404);
 
-        $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        static::$client->request('POST', '/api/users/login', ['json' => $body]);
     }
 
     public function testThrowsAnInvalidPasswordException(): void
@@ -125,7 +125,7 @@ final class UserControllerTest extends TestCase
         $this->expectExceptionMessage('Incorrect password');
         $this->expectExceptionCode(401);
 
-        $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        static::$client->request('POST', '/api/users/login', ['json' => $body]);
     }
 
     public function testShouldAuthenticateTheUser(): void
@@ -135,7 +135,7 @@ final class UserControllerTest extends TestCase
             'password' => 'mypassword321'
         ];
 
-        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $response = static::$client->request('POST', '/api/users/login', ['json' => $body]);
 
         $authenticated = json_decode($response->getBody()->getContents());
 
@@ -151,10 +151,7 @@ final class UserControllerTest extends TestCase
         $this->expectExceptionMessage('Unauthorized user');
         $this->expectExceptionCode(401);
 
-        $this->client->request(
-            'GET',
-            "/api/users/{$username}",
-        );
+        static::$client->request('GET', "/api/users/{$username}");
     }
 
     public function testThrowsAWrongTokenException(): void
@@ -166,7 +163,7 @@ final class UserControllerTest extends TestCase
             'password' => 'mypassword321'
         ];
 
-        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $response = static::$client->request('POST', '/api/users/login', ['json' => $body]);
         $authenticated = json_decode($response->getBody()->getContents());
 
         // Verify authorization
@@ -177,7 +174,7 @@ final class UserControllerTest extends TestCase
         $this->expectExceptionMessage('Invalid authenticated user');
         $this->expectExceptionCode(401);
 
-        $this->client->request('GET', "/api/users/{$username}", [
+        static::$client->request('GET', "/api/users/{$username}", [
             'headers' => [
                 'Authorization' => 'Bearer ' . $authenticated->token . 'wrong token lol :)'
             ]
@@ -193,14 +190,14 @@ final class UserControllerTest extends TestCase
             'password' => 'mypassword321'
         ];
 
-        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $response = static::$client->request('POST', '/api/users/login', ['json' => $body]);
         $authenticated = json_decode($response->getBody()->getContents());
 
         // Verify authorization
 
         $username = 'guest';
 
-        $user = $this->client->request('GET', "/api/users/{$username}", [
+        $user = static::$client->request('GET', "/api/users/{$username}", [
             'headers' => [
                 'Authorization' => 'Bearer ' . $authenticated->token
             ]
@@ -217,14 +214,14 @@ final class UserControllerTest extends TestCase
             'password' => 'mypassword321'
         ];
 
-        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $response = static::$client->request('POST', '/api/users/login', ['json' => $body]);
         $authenticated = json_decode($response->getBody()->getContents());
 
         // Update email
         $username = 'guest';
         $updateData = ['email' => 'newemail@mail.com'];
 
-        $updated = $this->client->request('PATCH', "/api/users/email/{$username}", [
+        $updated = static::$client->request('PATCH', "/api/users/email/{$username}", [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $authenticated->token
@@ -247,14 +244,14 @@ final class UserControllerTest extends TestCase
             'password' => 'mypassword321'
         ];
 
-        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $response = static::$client->request('POST', '/api/users/login', ['json' => $body]);
         $authenticated = json_decode($response->getBody()->getContents());
 
         // Update name
         $username = 'guest';
         $updateData = ['name' => 'new name'];
 
-        $updated = $this->client->request('PATCH', "/api/users/name/{$username}", [
+        $updated = static::$client->request('PATCH', "/api/users/name/{$username}", [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $authenticated->token
@@ -277,14 +274,14 @@ final class UserControllerTest extends TestCase
             'password' => 'mypassword321'
         ];
 
-        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $response = static::$client->request('POST', '/api/users/login', ['json' => $body]);
         $authenticated = json_decode($response->getBody()->getContents());
 
         // Update username
         $username = 'guest';
         $updateData = ['username' => '_newusername'];
 
-        $updated = $this->client->request('PATCH', "/api/users/username/{$username}", [
+        $updated = static::$client->request('PATCH', "/api/users/username/{$username}", [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $authenticated->token
@@ -307,14 +304,14 @@ final class UserControllerTest extends TestCase
             'password' => 'mypassword321'
         ];
 
-        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $response = static::$client->request('POST', '/api/users/login', ['json' => $body]);
         $authenticated = json_decode($response->getBody()->getContents());
 
         // Update description
         $username = '_newusername';
         $updateData = ['bio' => 'Another description'];
 
-        $updated = $this->client->request('PATCH', "/api/users/description/{$username}", [
+        $updated = static::$client->request('PATCH', "/api/users/description/{$username}", [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $authenticated->token
@@ -337,7 +334,7 @@ final class UserControllerTest extends TestCase
             'password' => 'mypassword321'
         ];
 
-        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $response = static::$client->request('POST', '/api/users/login', ['json' => $body]);
         $authenticated = json_decode($response->getBody()->getContents());
 
         // Update password
@@ -347,7 +344,7 @@ final class UserControllerTest extends TestCase
             'new_password' => 'mynewpassword123'
         ];
 
-        $updated = $this->client->request('PATCH', "/api/users/password/{$username}", [
+        $updated = static::$client->request('PATCH', "/api/users/password/{$username}", [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $authenticated->token
@@ -370,11 +367,11 @@ final class UserControllerTest extends TestCase
             'password' => 'mynewpassword123'
         ];
 
-        $response = $this->client->request('POST', '/api/users/login', ['json' => $body]);
+        $response = static::$client->request('POST', '/api/users/login', ['json' => $body]);
         $authenticated = json_decode($response->getBody()->getContents());
 
         $username = '_newusername';
-        $updated = $this->client->request('DELETE', "/api/users/{$username}", [
+        $updated = static::$client->request('DELETE', "/api/users/{$username}", [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $authenticated->token

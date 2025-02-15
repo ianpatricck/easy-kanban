@@ -1,0 +1,17 @@
+<?php declare(strict_types=1);
+
+namespace App\Usecases\Board;
+
+use App\Data\Repositories\BoardRepository;
+
+class FindManyBoardUsecase
+{
+    public function __construct(
+        protected BoardRepository $boardRepository
+    ) {}
+
+    public function execute(int $limit): array|null
+    {
+        return $this->boardRepository->findMany($limit);
+    }
+}

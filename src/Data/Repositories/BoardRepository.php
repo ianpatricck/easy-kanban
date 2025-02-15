@@ -33,6 +33,25 @@ class BoardRepository
         return null;
     }
 
+    public function findMany(int $limit): array|null
+    {
+        $query = 'SELECT * FROM boards LIMIT ?';
+        $boards = $this->boardDAO->fetchMany($query, [$limit]);
+
+        if (!empty($boards)) {
+            $boardEntities = [];
+
+            foreach ($boards as $board) {
+                $boardArray = get_object_vars($board);
+                $boardEntities[] = new Board(...array_values($boardArray));
+            }
+
+            return $boardEntities;
+        }
+
+        return null;
+    }
+
     public function update(int $id, int $owner, UpdateBoardDTO $dto): void
     {
         $query = 'UPDATE boards SET name = ? WHERE id = ? AND owner = ?';

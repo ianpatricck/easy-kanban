@@ -9,6 +9,8 @@ namespace App\Controllers;
 use App\DTO\CreateBoardDTO;
 use App\DTO\UpdateBoardDTO;
 use App\Usecases\Board\CreateBoardUsecase;
+use App\Usecases\Board\DeleteBoardUsecase;
+use App\Usecases\Board\FindBoardUsecase;
 use App\Usecases\Board\FindManyBoardUsecase;
 use App\Usecases\Board\UpdateBoardUsecase;
 use App\Usecases\User\AuthorizeUserUsecase;
@@ -23,6 +25,8 @@ class BoardController
         private CreateBoardUsecase $createBoardUsecase,
         private UpdateBoardUsecase $updateBoardUsecase,
         private FindManyBoardUsecase $findManyBoardUsecase,
+        private DeleteBoardUsecase $deleteBoardUsecase,
+        private FindBoardUsecase $findBoardUsecase,
     ) {}
 
     /*
@@ -136,6 +140,48 @@ class BoardController
             $response->getBody()->write(
                 json_encode([
                     'message' => 'Board was updated successfully'
+                ])
+            );
+
+            return $response->withStatus(201);
+        } catch (Exception $exception) {
+            $response->getBody()->write(
+                json_encode([
+                    'message' => $exception->getMessage()
+                ])
+            );
+
+            return $response->withStatus($exception->getCode());
+        }
+    }
+
+    /*
+     * Método para deletar um quadro
+     *
+     * @param Request $request
+     * @param Response $response
+     *
+     * return Response
+     */
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $bearer = $request->getHeaderLine('Authorization');
+            $token = explode(' ', $bearer)[1];
+            $authorizedUser = $this->authorizeUserUsecase->execute($token);
+
+            $boardId = (int) $args['id'];
+            $board = $this->findBoardUsecase->execute($boardId);
+
+            if ($authorizedUser->id !== $board->getOwner()) {
+                throw new Exception('User unauthorized', 400);
+            }
+
+            $this->deleteBoardUsecase->execute($boardId);
+
+            $response->getBody()->write(
+                json_encode([
+                    'message' => 'Board was deleted successfully'
                 ])
             );
 

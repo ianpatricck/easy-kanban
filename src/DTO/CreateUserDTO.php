@@ -1,5 +1,9 @@
 <?php declare(strict_types=1);
 
+// |============================================|
+// | DTO para criar um usuário                  |
+// |============================================|
+
 namespace App\DTO;
 
 class CreateUserDTO

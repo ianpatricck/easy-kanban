@@ -1,5 +1,9 @@
 <?php declare(strict_types=1);
 
+// |============================================|
+// | DTO para criar um cartão                   |
+// |============================================|
+
 namespace App\DTO;
 
 class CreateCardDTO

@@ -1,5 +1,9 @@
 <?php declare(strict_types=1);
 
+// |============================================|
+// | DTO para criar um quadro                   |
+// |============================================|
+
 namespace App\DTO;
 
 class CreateBoardDTO

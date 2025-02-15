@@ -4,6 +4,7 @@ namespace App\Usecases\Card;
 
 use App\Data\Repositories\CardRepository;
 use App\DTO\CreateCardDTO;
+use Exception;
 
 class CreateCardUsecase
 {
@@ -16,17 +17,17 @@ class CreateCardUsecase
         $name = $createCardDTO->name;
 
         if (!isset($name) || !(strlen(trim($name)) > 0)) {
-            throw new \InvalidArgumentException("The card's name was not provided", 400);
+            throw new Exception("The card's name was not provided", 400);
         }
 
         $hexBackgroundColor = $createCardDTO->hex_bgcolor;
 
         if (!preg_match('/^#[a-f0-9]{6}$/i', $hexBackgroundColor)) {
-            throw new \InvalidArgumentException('Invalid color format', 400);
+            throw new Exception('Invalid color format', 400);
         }
 
         if (preg_match('/[^a-zA-Z0-9\s*]/', $name)) {
-            throw new \InvalidArgumentException("Name's format is not valid", 400);
+            throw new Exception("Name's format is not valid", 400);
         }
 
         $this->cardRepository->create($createCardDTO);

@@ -93,7 +93,7 @@ final class CreateCardUsecaseTest extends TestCase
             board: self::$board->getId()
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage("The card's name was not provided");
         $this->expectExceptionCode(400);
 
@@ -111,14 +111,14 @@ final class CreateCardUsecaseTest extends TestCase
             board: self::$board->getId()
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Invalid color format');
         $this->expectExceptionCode(400);
 
         $createCardUsecase->execute($createCardDTO);
     }
 
-    public function testThorwsAnInvalidNameException(): void
+    public function testThrowsAnInvalidNameException(): void
     {
         $createCardContainer = new DI\Container();
         $createCardUsecase = $createCardContainer->get(CreateCardUsecase::class);
@@ -129,7 +129,7 @@ final class CreateCardUsecaseTest extends TestCase
             board: self::$board->getId()
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage("Name's format is not valid");
         $this->expectExceptionCode(400);
 

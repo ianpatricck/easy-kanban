@@ -46,28 +46,16 @@ $app->group('/api', function ($api) use ($appContainer) {
     // Users
     $api->post('/users/create', [$userController, 'create']);
     $api->post('/users/login', [$userController, 'login']);
-    $api
-        ->get('/users/{by}', [$userController, 'findOne'])
-        ->add($userAuthorizedMiddleware);
-    $api
-        ->patch('/users/email/{by}', [$userController, 'updateEmail'])
-        ->add($userAuthorizedMiddleware);
-    $api
-        ->patch('/users/name/{by}', [$userController, 'updateName'])
-        ->add($userAuthorizedMiddleware);
-    $api
-        ->patch('/users/username/{by}', [$userController, 'updateUsername'])
-        ->add($userAuthorizedMiddleware);
-    $api
-        ->patch('/users/description/{by}', [$userController, 'updateBio'])
-        ->add($userAuthorizedMiddleware);
-    $api
-        ->patch('/users/password/{by}', [$userController, 'updatePassword'])
-        ->add($userAuthorizedMiddleware);
-    $api
-        ->delete('/users/{by}', [$userController, 'delete'])
-        ->add($userAuthorizedMiddleware);
+    $api->get('/users/{by}', [$userController, 'findOne'])->add($userAuthorizedMiddleware);
+    $api->patch('/users/email/{by}', [$userController, 'updateEmail'])->add($userAuthorizedMiddleware);
+    $api->patch('/users/name/{by}', [$userController, 'updateName'])->add($userAuthorizedMiddleware);
+    $api->patch('/users/username/{by}', [$userController, 'updateUsername'])->add($userAuthorizedMiddleware);
+    $api->patch('/users/description/{by}', [$userController, 'updateBio'])->add($userAuthorizedMiddleware);
+    $api->patch('/users/password/{by}', [$userController, 'updatePassword'])->add($userAuthorizedMiddleware);
+    $api->delete('/users/{by}', [$userController, 'delete'])->add($userAuthorizedMiddleware);
 
     // Boards
+    $api->get('/boards', [$boardController, 'findMany'])->add($userAuthorizedMiddleware);
     $api->post('/boards/create', [$boardController, 'create'])->add($userAuthorizedMiddleware);
+    $api->put('/boards/{id}/{ownerId}', [$boardController, 'update'])->add($userAuthorizedMiddleware);
 });

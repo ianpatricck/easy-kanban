@@ -17,4 +17,29 @@ class Card
     {
         return $this->id;
     }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getHexBgcolor(): string
+    {
+        return $this->hex_bgcolor;
+    }
+
+    public function getBoard(): int
+    {
+        return $this->board;
+    }
+
+    public function getCreatedAt(): string
+    {
+        return $this->created_at;
+    }
+
+    public function getUpdatedAt(): string
+    {
+        return $this->updated_at;
+    }
 }

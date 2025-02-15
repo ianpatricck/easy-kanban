@@ -192,7 +192,7 @@ final class BoardControllerTest extends TestCase
     public function testShouldUpdateOneBoard(): void
     {
         // Get the last board
-        $responseBoards = static::$client->request('GET', '/api/boards', [
+        $responseBoards = static::$client->request('GET', '/api/boards?limit=2', [
             'headers' => [
                 'Authorization' => 'Bearer ' . static::$authToken
             ]
@@ -229,5 +229,31 @@ final class BoardControllerTest extends TestCase
         );
 
         $this->assertSame(201, $updated->getStatusCode());
+    }
+
+    public function testShouldDeleteOneBoard(): void
+    {
+        // Get the last board
+        $responseBoards = static::$client->request('GET', '/api/boards?limit=1', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . static::$authToken
+            ]
+        ]);
+
+        $boards = json_decode($responseBoards->getBody()->getContents());
+        $lastBoard = end($boards);
+
+        $deleted = static::$client->request('DELETE', "/api/boards/{$lastBoard->id}", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . static::$authToken
+            ]
+        ]);
+
+        $this->assertSame(
+            json_encode(['message' => 'Board was deleted successfully']),
+            $deleted->getBody()->getContents()
+        );
+
+        $this->assertSame(201, $deleted->getStatusCode());
     }
 }

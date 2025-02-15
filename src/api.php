@@ -58,4 +58,5 @@ $app->group('/api', function ($api) use ($appContainer) {
     $api->get('/boards', [$boardController, 'findMany'])->add($userAuthorizedMiddleware);
     $api->post('/boards/create', [$boardController, 'create'])->add($userAuthorizedMiddleware);
     $api->put('/boards/{id}/{ownerId}', [$boardController, 'update'])->add($userAuthorizedMiddleware);
+    $api->delete('/boards/{id}', [$boardController, 'delete'])->add($userAuthorizedMiddleware);
 });

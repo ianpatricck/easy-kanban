@@ -36,7 +36,8 @@ class BoardController
     public function findMany(Request $request, Response $response, array $args): Response
     {
         try {
-            $boards = $this->findManyBoardUsecase->execute(2);
+            $limit = (int) $request->getQueryParams()['limit'];
+            $boards = $this->findManyBoardUsecase->execute($limit);
             $boardsResponse = [];
 
             foreach ($boards as $board) {

@@ -38,4 +38,10 @@ class CardRepository
         $query = 'UPDATE cards SET name = ?, hex_bgcolor = ? WHERE id = ?';
         $this->cardDAO->execute($query, [...get_object_vars($dto), $id]);
     }
+
+    public function delete(int $id): void
+    {
+        $query = 'DELETE FROM cards WHERE id = ?';
+        $this->cardDAO->execute($query, [$id]);
+    }
 }

@@ -13,9 +13,29 @@ class CardRepository
         private readonly CardDAO $cardDAO
     ) {}
 
+    public function findOne(int $id): Card|null
+    {
+        $query = 'SELECT * FROM cards WHERE id = ?';
+        $card = $this->cardDAO->fetchOne($query, [$id]);
+
+        if ($card) {
+            $cardArray = get_object_vars($card);
+            $cardEntity = new Card(...array_values($cardArray));
+            return $cardEntity;
+        }
+
+        return null;
+    }
+
     public function create(CreateCardDTO $dto): void
     {
         $query = 'INSERT INTO cards (name, hex_bgcolor, board) VALUES (?, ?, ?)';
         $this->cardDAO->execute($query, get_object_vars($dto));
+    }
+
+    public function update(int $id, UpdateCardDTO $dto): void
+    {
+        $query = 'UPDATE cards SET name = ?, hex_bgcolor = ? WHERE id = ?';
+        $this->cardDAO->execute($query, [...get_object_vars($dto), $id]);
     }
 }

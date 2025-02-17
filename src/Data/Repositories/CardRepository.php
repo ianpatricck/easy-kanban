@@ -27,6 +27,25 @@ class CardRepository
         return null;
     }
 
+    public function findMany(int $limit): array
+    {
+        $query = 'SELECT * FROM cards LIMIT ?';
+        $cards = $this->cardDAO->fetchMany($query, [$limit]);
+
+        if (!empty($cards)) {
+            $cardsEntities = [];
+
+            foreach ($cards as $card) {
+                $cardArray = get_object_vars($card);
+                $cardsEntities[] = new Card(...array_values($cardArray));
+            }
+
+            return $cardsEntities;
+        }
+
+        return [];
+    }
+
     public function create(CreateCardDTO $dto): void
     {
         $query = 'INSERT INTO cards (name, hex_bgcolor, board) VALUES (?, ?, ?)';

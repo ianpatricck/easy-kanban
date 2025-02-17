@@ -63,5 +63,6 @@ $app->group('/api', function ($api) use ($appContainer) {
     $api->delete('/boards/{id}', [$boardController, 'delete'])->add($userAuthorizedMiddleware);
 
     // Cards
+    $api->get('/cards', [$cardController, 'findMany'])->add($userAuthorizedMiddleware);
     $api->post('/cards/create', [$cardController, 'create'])->add($userAuthorizedMiddleware);
 });

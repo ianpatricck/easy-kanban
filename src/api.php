@@ -5,6 +5,7 @@
 // |============================================|
 
 use App\Controllers\BoardController;
+use App\Controllers\CardController;
 use App\Controllers\UserController;
 use App\Middlewares\UserAuthorizedMiddleware;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -21,6 +22,7 @@ $app->group('/api', function ($api) use ($appContainer) {
     // Controllers
     $userController = $appContainer->get(UserController::class);
     $boardController = $appContainer->get(BoardController::class);
+    $cardController = $appContainer->get(CardController::class);
 
     /*
      * Middleware para verificar a autenticidade do usuário.
@@ -59,4 +61,7 @@ $app->group('/api', function ($api) use ($appContainer) {
     $api->post('/boards/create', [$boardController, 'create'])->add($userAuthorizedMiddleware);
     $api->put('/boards/{id}/{ownerId}', [$boardController, 'update'])->add($userAuthorizedMiddleware);
     $api->delete('/boards/{id}', [$boardController, 'delete'])->add($userAuthorizedMiddleware);
+
+    // Cards
+    $api->post('/cards/create', [$cardController, 'create'])->add($userAuthorizedMiddleware);
 });

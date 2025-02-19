@@ -150,4 +150,50 @@ final class CardControllerTest extends TestCase
 
         $this->assertSame(201, $created->getStatusCode());
     }
+
+    public function testShouldUpdateCard(): void
+    {
+        // Get cards
+        $cards = self::$client->request('GET', '/api/cards?limit=1', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        $cardsContents = json_decode($cards->getBody()->getContents());
+        $lastCard = end($cardsContents);
+
+        // Update the last card created
+        $updateCardPayload = [
+            'name' => 'Backlog',
+            'hex_bgcolor' => '#f3f2f1',
+        ];
+
+        $wasUpdated = self::$client->request('PUT', "/api/cards/{$lastCard->id}", [
+            'json' => $updateCardPayload,
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        // Get the updated card
+        $updatedCard = self::$client->request('GET', "/api/cards/{$lastCard->id}", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        $updatedCardContents = json_decode($updatedCard->getBody()->getContents());
+
+        $this->assertSame(201, $wasUpdated->getStatusCode());
+        $this->assertSame(
+            json_encode(['message' => 'Card was updated successfully']),
+            $wasUpdated->getBody()->getContents()
+        );
+
+        $this->assertSame($updateCardPayload, [
+            'name' => $updatedCardContents->name,
+            'hex_bgcolor' => $updatedCardContents->hex_bgcolor,
+        ]);
+    }
 }

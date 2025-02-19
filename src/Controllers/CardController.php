@@ -7,9 +7,12 @@
 namespace App\Controllers;
 
 use App\DTO\CreateCardDTO;
+use App\DTO\UpdateCardDTO;
 use App\Usecases\Board\FindBoardUsecase;
 use App\Usecases\Card\CreateCardUsecase;
+use App\Usecases\Card\FindCardUsecase;
 use App\Usecases\Card\FindManyCardUsecase;
+use App\Usecases\Card\UpdateCardUsecase;
 use App\Usecases\User\AuthorizeUserUsecase;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -20,16 +23,54 @@ class CardController
     public function __construct(
         private AuthorizeUserUsecase $authorizeUserUsecase,
         private CreateCardUsecase $createCardUsecase,
+        private UpdateCardUsecase $updateCardUsecase,
         private FindBoardUsecase $findBoardUsecase,
         private FindManyCardUsecase $findManyCardUsecase,
+        private FindCardUsecase $findCardUsecase,
     ) {}
+
+    /*
+     * Método para encontrar um cartão
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param array  $args
+     *
+     * return Response
+     */
+    public function findOne(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $id = (int) $args['id'];
+            $card = $this->findCardUsecase->execute($id);
+
+            $cardResponse = [
+                'id' => $card->getId(),
+                'name' => $card->getName(),
+                'hex_bgcolor' => $card->getHexBgColor(),
+                'board' => $card->getBoard(),
+                'created_at' => $card->getCreatedAt(),
+                'updated_at' => $card->getUpdatedAt(),
+            ];
+
+            $response->getBody()->write(json_encode($cardResponse));
+            return $response->withStatus(200);
+        } catch (Exception $exception) {
+            $response->getBody()->write(
+                json_encode([
+                    'message' => $exception->getMessage()
+                ])
+            );
+
+            return $response->withStatus($exception->getCode());
+        }
+    }
 
     /*
      * Método para encontrar muitos cartões
      *
      * @param Request $request
      * @param Response $response
-     * @param array  $args
      *
      * return Response
      */
@@ -95,6 +136,53 @@ class CardController
             $response->getBody()->write(
                 json_encode([
                     'message' => 'Card was created successfully'
+                ])
+            );
+
+            return $response->withStatus(201);
+        } catch (Exception $exception) {
+            $response->getBody()->write(
+                json_encode([
+                    'message' => $exception->getMessage()
+                ])
+            );
+
+            return $response->withStatus($exception->getCode());
+        }
+    }
+
+    /*
+     * Método para atualizar um cartão
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     *
+     * return Response
+     */
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $bearer = $request->getHeaderLine('Authorization');
+            $token = explode(' ', $bearer)[1];
+            $authorizedUser = $this->authorizeUserUsecase->execute($token);
+
+            $cardId = (int) $args['id'];
+            $body = $request->getParsedBody();
+
+            $cardEntity = $this->findCardUsecase->execute($cardId);
+            $boardEntity = $this->findBoardUsecase->execute($cardEntity->getBoard());
+
+            if ($authorizedUser->id !== $boardEntity->getOwner()) {
+                throw new Exception('User unauthorized', 401);
+            }
+
+            $updateCardDTO = new UpdateCardDTO(...$body);
+            $this->updateCardUsecase->execute($cardId, $updateCardDTO);
+
+            $response->getBody()->write(
+                json_encode([
+                    'message' => 'Card was updated successfully'
                 ])
             );
 

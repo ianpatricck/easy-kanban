@@ -10,6 +10,7 @@ use App\DTO\CreateCardDTO;
 use App\DTO\UpdateCardDTO;
 use App\Usecases\Board\FindBoardUsecase;
 use App\Usecases\Card\CreateCardUsecase;
+use App\Usecases\Card\DeleteCardUsecase;
 use App\Usecases\Card\FindCardUsecase;
 use App\Usecases\Card\FindManyCardUsecase;
 use App\Usecases\Card\UpdateCardUsecase;
@@ -29,6 +30,7 @@ class CardController
         private FindBoardUsecase $findBoardUsecase,
         private FindManyCardUsecase $findManyCardUsecase,
         private FindCardUsecase $findCardUsecase,
+        private DeleteCardUsecase $deleteCardUsecase,
     ) {}
 
     /*
@@ -181,6 +183,48 @@ class CardController
             $response->getBody()->write(
                 json_encode([
                     'message' => 'Card was updated successfully'
+                ])
+            );
+
+            return $response->withStatus(201);
+        } catch (Exception $exception) {
+            $response->getBody()->write(
+                json_encode([
+                    'message' => $exception->getMessage()
+                ])
+            );
+
+            return $response->withStatus($exception->getCode());
+        }
+    }
+
+    /*
+     * Método para deletar um cartão
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     *
+     * return Response
+     */
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $authorizedUser = isAuthorizedUser($request->getHeaderLine('Authorization'));
+            $cardId = (int) $args['id'];
+
+            $cardEntity = $this->findCardUsecase->execute($cardId);
+            $boardEntity = $this->findBoardUsecase->execute($cardEntity->getBoard());
+
+            if ($authorizedUser->id !== $boardEntity->getOwner()) {
+                throw new Exception('User unauthorized', 401);
+            }
+
+            $this->deleteCardUsecase->execute($cardId);
+
+            $response->getBody()->write(
+                json_encode([
+                    'message' => 'Card was deleted successfully'
                 ])
             );
 

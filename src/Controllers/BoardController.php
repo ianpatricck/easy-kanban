@@ -18,6 +18,8 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Exception;
 
+use function App\utils\isAuthorizedUser;
+
 class BoardController
 {
     public function __construct(
@@ -80,10 +82,7 @@ class BoardController
     public function create(Request $request, Response $response): Response
     {
         try {
-            $bearer = $request->getHeaderLine('Authorization');
-            $token = explode(' ', $bearer)[1];
-            $authorizedUser = $this->authorizeUserUsecase->execute($token);
-
+            $authorizedUser = isAuthorizedUser($request->getHeaderLine('Authorization'));
             $body = $request->getParsedBody();
 
             if ($authorizedUser->id !== $body['owner']) {
@@ -122,9 +121,7 @@ class BoardController
     public function update(Request $request, Response $response, array $args): Response
     {
         try {
-            $bearer = $request->getHeaderLine('Authorization');
-            $token = explode(' ', $bearer)[1];
-            $authorizedUser = $this->authorizeUserUsecase->execute($token);
+            $authorizedUser = isAuthorizedUser($request->getHeaderLine('Authorization'));
 
             $boardId = (int) $args['id'];
             $owner = (int) $args['ownerId'];
@@ -166,9 +163,7 @@ class BoardController
     public function delete(Request $request, Response $response, array $args): Response
     {
         try {
-            $bearer = $request->getHeaderLine('Authorization');
-            $token = explode(' ', $bearer)[1];
-            $authorizedUser = $this->authorizeUserUsecase->execute($token);
+            $authorizedUser = isAuthorizedUser($request->getHeaderLine('Authorization'));
 
             $boardId = (int) $args['id'];
             $board = $this->findBoardUsecase->execute($boardId);

@@ -8,6 +8,7 @@ use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/utils/isAuthorizedUser.php';
 
 $app = AppFactory::create();
 

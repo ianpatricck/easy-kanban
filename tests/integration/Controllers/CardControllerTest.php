@@ -196,4 +196,30 @@ final class CardControllerTest extends TestCase
             'hex_bgcolor' => $updatedCardContents->hex_bgcolor,
         ]);
     }
+
+    public function testShouldDeleteCard(): void
+    {
+        // Get cards
+        $cards = self::$client->request('GET', '/api/cards?limit=1', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        $cardsContents = json_decode($cards->getBody()->getContents());
+        $lastCard = end($cardsContents);
+
+        // Delete the card
+        $deleted = self::$client->request('DELETE', "/api/cards/{$lastCard->id}", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        $this->assertSame(201, $deleted->getStatusCode());
+        $this->assertSame(
+            json_encode(['message' => 'Card was deleted successfully']),
+            $deleted->getBody()->getContents()
+        );
+    }
 }

@@ -15,4 +15,49 @@ class Task
         private string $created_at,
         private string $updated_at,
     ) {}
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function getBody(): string
+    {
+        return $this->body;
+    }
+
+    public function getHexBgColor(): string
+    {
+        return $this->hex_bgcolor;
+    }
+
+    public function getOwner(): int
+    {
+        return $this->owner;
+    }
+
+    public function getAttributedTo(): int
+    {
+        return $this->attributed_to;
+    }
+
+    public function getCard(): int
+    {
+        return $this->card;
+    }
+
+    public function getCreatedAt(): string
+    {
+        return $this->created_at;
+    }
+
+    public function getUpdatedAt(): string
+    {
+        return $this->updated_at;
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Data\Repositories;
 
-use App\Data\DAO\BoardDAO;
+use App\Data\DAO;
 use App\DTO\CreateBoardDTO;
 use App\DTO\UpdateBoardDTO;
 use App\Entities\Board;
@@ -10,19 +10,19 @@ use App\Entities\Board;
 class BoardRepository
 {
     public function __construct(
-        private readonly BoardDAO $boardDAO
+        private readonly DAO $dao
     ) {}
 
     public function create(CreateBoardDTO $dto): void
     {
         $query = 'INSERT INTO boards (name, owner, description, active_users) VALUES (?, ?, ?, ?)';
-        $this->boardDAO->execute($query, get_object_vars($dto));
+        $this->dao->execute($query, get_object_vars($dto));
     }
 
     public function findOneById(int $id): Board|null
     {
         $query = 'SELECT * FROM boards WHERE id = ?';
-        $board = $this->boardDAO->fetchOne($query, [$id]);
+        $board = $this->dao->fetchOne($query, [$id]);
 
         if ($board) {
             $boardArray = get_object_vars($board);
@@ -36,7 +36,7 @@ class BoardRepository
     public function findMany(int $limit): array|null
     {
         $query = 'SELECT * FROM boards LIMIT ?';
-        $boards = $this->boardDAO->fetchMany($query, [$limit]);
+        $boards = $this->dao->fetchMany($query, [$limit]);
 
         if (!empty($boards)) {
             $boardEntities = [];
@@ -62,12 +62,12 @@ class BoardRepository
             $values = [$dto->name, $dto->description, $id, $owner];
         }
 
-        $this->boardDAO->execute($query, $values);
+        $this->dao->execute($query, $values);
     }
 
     public function delete(int $id): void
     {
         $query = 'DELETE FROM boards WHERE id = ?';
-        $this->boardDAO->execute($query, [$id]);
+        $this->dao->execute($query, [$id]);
     }
 }

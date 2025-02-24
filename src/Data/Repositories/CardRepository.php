@@ -2,7 +2,7 @@
 
 namespace App\Data\Repositories;
 
-use App\Data\DAO\CardDAO;
+use App\Data\DAO;
 use App\DTO\CreateCardDTO;
 use App\DTO\UpdateCardDTO;
 use App\Entities\Card;
@@ -10,13 +10,13 @@ use App\Entities\Card;
 class CardRepository
 {
     public function __construct(
-        private readonly CardDAO $cardDAO
+        private readonly DAO $dao
     ) {}
 
     public function findOne(int $id): Card|null
     {
         $query = 'SELECT * FROM cards WHERE id = ?';
-        $card = $this->cardDAO->fetchOne($query, [$id]);
+        $card = $this->dao->fetchOne($query, [$id]);
 
         if ($card) {
             $cardArray = get_object_vars($card);
@@ -30,7 +30,7 @@ class CardRepository
     public function findMany(int $limit): array
     {
         $query = 'SELECT * FROM cards LIMIT ?';
-        $cards = $this->cardDAO->fetchMany($query, [$limit]);
+        $cards = $this->dao->fetchMany($query, [$limit]);
 
         if (!empty($cards)) {
             $cardsEntities = [];
@@ -49,18 +49,18 @@ class CardRepository
     public function create(CreateCardDTO $dto): void
     {
         $query = 'INSERT INTO cards (name, hex_bgcolor, board) VALUES (?, ?, ?)';
-        $this->cardDAO->execute($query, get_object_vars($dto));
+        $this->dao->execute($query, get_object_vars($dto));
     }
 
     public function update(int $id, UpdateCardDTO $dto): void
     {
         $query = 'UPDATE cards SET name = ?, hex_bgcolor = ? WHERE id = ?';
-        $this->cardDAO->execute($query, [...get_object_vars($dto), $id]);
+        $this->dao->execute($query, [...get_object_vars($dto), $id]);
     }
 
     public function delete(int $id): void
     {
         $query = 'DELETE FROM cards WHERE id = ?';
-        $this->cardDAO->execute($query, [$id]);
+        $this->dao->execute($query, [$id]);
     }
 }

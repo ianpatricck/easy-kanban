@@ -4,6 +4,7 @@ namespace App\Data\Repositories;
 
 use App\Data\DAO;
 use App\DTO\CreateTaskDTO;
+use App\DTO\UpdateTaskDTO;
 use App\Entities\Task;
 
 class TaskRepository
@@ -51,5 +52,11 @@ class TaskRepository
                 VALUES (?, ?, ?, ?, ?, ?)';
 
         $this->dao->execute($query, get_object_vars($dto));
+    }
+
+    public function update(int $id, UpdateTaskDTO $dto): void
+    {
+        $query = 'UPDATE tasks SET title = ?, body = ?, hex_bgcolor = ?, attributed_to = ? WHERE id = ?';
+        $this->dao->execute($query, [...get_object_vars($dto), $id]);
     }
 }

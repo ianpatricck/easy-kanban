@@ -23,6 +23,5 @@ $appContainerBuilder->addDefinitions(__DIR__ . '/di-config.php');
 $appContainer = $appContainerBuilder->build();
 
 require __DIR__ . '/api.php';
-require __DIR__ . '/web.php';
 
 $app->run();

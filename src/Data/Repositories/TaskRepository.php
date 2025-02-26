@@ -59,4 +59,10 @@ class TaskRepository
         $query = 'UPDATE tasks SET title = ?, body = ?, hex_bgcolor = ?, attributed_to = ? WHERE id = ?';
         $this->dao->execute($query, [...get_object_vars($dto), $id]);
     }
+
+    public function delete(int $id): void
+    {
+        $query = 'DELETE FROM tasks WHERE id = ?';
+        $this->dao->execute($query, [$id]);
+    }
 }

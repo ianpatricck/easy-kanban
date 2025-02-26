@@ -15,7 +15,6 @@ use App\Usecases\Card\FindManyCardUsecase;
 use App\Usecases\Task\CreateTaskUsecase;
 use App\Usecases\Task\DeleteTaskUsecase;
 use App\Usecases\Task\FindManyTaskUsecase;
-use App\Usecases\Task\FindTaskUsecase;
 use App\Usecases\User\CreateUserUsecase;
 use App\Usecases\User\FindUserUsecase;
 use PHPUnit\Framework\TestCase;

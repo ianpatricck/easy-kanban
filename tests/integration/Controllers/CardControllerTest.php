@@ -117,7 +117,7 @@ final class CardControllerTest extends TestCase
         ]);
     }
 
-    public function testShouldCreateOneBoard(): void
+    public function testShouldCreateOneCard(): void
     {
         // Get board data
         $boardsResponse = self::$client->request('GET', '/api/boards?limit=1', [

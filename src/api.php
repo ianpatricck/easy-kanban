@@ -6,6 +6,7 @@
 
 use App\Controllers\BoardController;
 use App\Controllers\CardController;
+use App\Controllers\TaskController;
 use App\Controllers\UserController;
 use App\Middlewares\UserAuthorizedMiddleware;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -23,6 +24,7 @@ $app->group('/api', function ($api) use ($appContainer) {
     $userController = $appContainer->get(UserController::class);
     $boardController = $appContainer->get(BoardController::class);
     $cardController = $appContainer->get(CardController::class);
+    $taskController = $appContainer->get(TaskController::class);
 
     /*
      * Middleware para verificar a autenticidade do usuário.
@@ -68,4 +70,9 @@ $app->group('/api', function ($api) use ($appContainer) {
     $api->post('/cards/create', [$cardController, 'create'])->add($userAuthorizedMiddleware);
     $api->put('/cards/{id}', [$cardController, 'update'])->add($userAuthorizedMiddleware);
     $api->delete('/cards/{id}', [$cardController, 'delete'])->add($userAuthorizedMiddleware);
+
+    // Tasks
+    $api->get('/tasks/{id}', [$taskController, 'findOne'])->add($userAuthorizedMiddleware);
+    $api->get('/tasks', [$taskController, 'findMany'])->add($userAuthorizedMiddleware);
+    $api->post('/tasks/create', [$taskController, 'create'])->add($userAuthorizedMiddleware);
 });

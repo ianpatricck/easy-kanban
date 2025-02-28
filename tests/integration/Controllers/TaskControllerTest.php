@@ -178,7 +178,7 @@ final class TaskControllerTest extends TestCase
         ]);
 
         $tasksContents = json_decode($tasks->getBody()->getContents());
-        $lastCard = end($tasksContents);
+        $lastTask = end($tasksContents);
 
         // Update the task
         $updateTaskPayload = [
@@ -188,7 +188,7 @@ final class TaskControllerTest extends TestCase
             'attributed_to' => self::$owner
         ];
 
-        $updatedTask = self::$client->request('PUT', "/api/tasks/{$lastCard->id}", [
+        $updatedTask = self::$client->request('PUT', "/api/tasks/{$lastTask->id}", [
             'json' => $updateTaskPayload,
             'headers' => [
                 'Authorization' => 'Bearer ' . self::$authToken
@@ -196,5 +196,33 @@ final class TaskControllerTest extends TestCase
         ]);
 
         $this->assertSame(201, $updatedTask->getStatusCode());
+    }
+
+    public function testShouldDeleteOneTask(): void
+    {
+        // Find a task
+        $tasks = self::$client->request('GET', '/api/tasks?limit=2', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        $tasksContents = json_decode($tasks->getBody()->getContents());
+        $lastTask = end($tasksContents);
+
+        // Delete the task
+        $deletedTask = self::$client->request('DELETE', "/api/tasks/{$lastTask->id}", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        $this->assertSame(201, $deletedTask->getStatusCode());
+        $this->assertSame(
+            'Task was deleted successfully',
+            json_decode(
+                $deletedTask->getBody()->getContents()
+            )->message
+        );
     }
 }

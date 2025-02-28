@@ -9,6 +9,7 @@ namespace App\Controllers;
 use App\DTO\CreateTaskDTO;
 use App\DTO\UpdateTaskDTO;
 use App\Usecases\Task\CreateTaskUsecase;
+use App\Usecases\Task\DeleteTaskUsecase;
 use App\Usecases\Task\FindManyTaskUsecase;
 use App\Usecases\Task\FindTaskUsecase;
 use App\Usecases\Task\UpdateTaskUsecase;
@@ -27,6 +28,7 @@ class TaskController
         private FindTaskUsecase $findTaskUsecase,
         private FindManyTaskUsecase $findManyTaskUsecase,
         private UpdateTaskUsecase $updateTaskUsecase,
+        private DeleteTaskUsecase $deleteTaskUsecase,
     ) {}
 
     /*
@@ -178,6 +180,47 @@ class TaskController
             $response->getBody()->write(
                 json_encode([
                     'message' => 'Task was updated successfully'
+                ])
+            );
+
+            return $response->withStatus(201);
+        } catch (Exception $exception) {
+            $response->getBody()->write(
+                json_encode([
+                    'message' => $exception->getMessage()
+                ])
+            );
+
+            return $response->withStatus($exception->getCode());
+        }
+    }
+
+    /*
+     * Método para deletar uma tarefa
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     *
+     * return Response
+     */
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $authorizedUser = isAuthorizedUser($request->getHeaderLine('Authorization'));
+            $taskId = (int) $args['id'];
+
+            $taskEntity = $this->findTaskUsecase->execute($taskId);
+
+            if ($authorizedUser->id !== $taskEntity->getOwner()) {
+                throw new Exception('User unauthorized', 401);
+            }
+
+            $this->deleteTaskUsecase->execute($taskId);
+
+            $response->getBody()->write(
+                json_encode([
+                    'message' => 'Task was deleted successfully'
                 ])
             );
 

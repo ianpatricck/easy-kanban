@@ -75,4 +75,5 @@ $app->group('/api', function ($api) use ($appContainer) {
     $api->get('/tasks/{id}', [$taskController, 'findOne'])->add($userAuthorizedMiddleware);
     $api->get('/tasks', [$taskController, 'findMany'])->add($userAuthorizedMiddleware);
     $api->post('/tasks/create', [$taskController, 'create'])->add($userAuthorizedMiddleware);
+    $api->put('/tasks/{id}', [$taskController, 'update'])->add($userAuthorizedMiddleware);
 });

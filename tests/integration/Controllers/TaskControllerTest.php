@@ -127,6 +127,7 @@ final class TaskControllerTest extends TestCase
 
     public function testShouldCreateOneTask(): void
     {
+        // Create one task
         $taskPayload = [
             'title' => 'first task!',
             'body' => 'This is my first task',
@@ -136,13 +137,16 @@ final class TaskControllerTest extends TestCase
             'card' => self::$cardId,
         ];
 
-        self::$client->request('POST', '/api/tasks/create', [
+        $createdTask = self::$client->request('POST', '/api/tasks/create', [
             'json' => $taskPayload,
             'headers' => [
                 'Authorization' => 'Bearer ' . self::$authToken
             ]
         ]);
 
+        $this->assertSame(201, $createdTask->getStatusCode());
+
+        // Find the task
         $tasks = self::$client->request('GET', '/api/tasks?limit=2', [
             'headers' => [
                 'Authorization' => 'Bearer ' . self::$authToken
@@ -162,5 +166,35 @@ final class TaskControllerTest extends TestCase
         $this->expectExceptionCode(401);
 
         self::$client->request('GET', '/api/tasks?limit=2');
+    }
+
+    public function testShouldUpdateOneTask(): void
+    {
+        // Find a task
+        $tasks = self::$client->request('GET', '/api/tasks?limit=2', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        $tasksContents = json_decode($tasks->getBody()->getContents());
+        $lastCard = end($tasksContents);
+
+        // Update the task
+        $updateTaskPayload = [
+            'title' => 'Updated task',
+            'body' => 'A New task',
+            'hex_bgcolor' => '#ffffff',
+            'attributed_to' => self::$owner
+        ];
+
+        $updatedTask = self::$client->request('PUT', "/api/tasks/{$lastCard->id}", [
+            'json' => $updateTaskPayload,
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        $this->assertSame(201, $updatedTask->getStatusCode());
     }
 }

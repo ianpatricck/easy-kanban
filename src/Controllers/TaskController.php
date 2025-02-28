@@ -7,9 +7,11 @@
 namespace App\Controllers;
 
 use App\DTO\CreateTaskDTO;
+use App\DTO\UpdateTaskDTO;
 use App\Usecases\Task\CreateTaskUsecase;
 use App\Usecases\Task\FindManyTaskUsecase;
 use App\Usecases\Task\FindTaskUsecase;
+use App\Usecases\Task\UpdateTaskUsecase;
 use App\Usecases\User\AuthorizeUserUsecase;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -24,6 +26,7 @@ class TaskController
         private CreateTaskUsecase $createTaskUsecase,
         private FindTaskUsecase $findTaskUsecase,
         private FindManyTaskUsecase $findManyTaskUsecase,
+        private UpdateTaskUsecase $updateTaskUsecase,
     ) {}
 
     /*
@@ -131,6 +134,50 @@ class TaskController
             $response->getBody()->write(
                 json_encode([
                     'message' => 'Task was created successfully'
+                ])
+            );
+
+            return $response->withStatus(201);
+        } catch (Exception $exception) {
+            $response->getBody()->write(
+                json_encode([
+                    'message' => $exception->getMessage()
+                ])
+            );
+
+            return $response->withStatus($exception->getCode());
+        }
+    }
+
+    /*
+     * Método para atualizar uma tarefa
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     *
+     * return Response
+     */
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $authorizedUser = isAuthorizedUser($request->getHeaderLine('Authorization'));
+
+            $taskId = (int) $args['id'];
+            $body = $request->getParsedBody();
+
+            $task = $this->findTaskUsecase->execute($taskId);
+
+            if ($authorizedUser->id !== $task->getOwner()) {
+                throw new Exception('User unauthorized', 401);
+            }
+
+            $updateTaskDTO = new UpdateTaskDTO(...$body);
+            $this->updateTaskUsecase->execute($taskId, $updateTaskDTO);
+
+            $response->getBody()->write(
+                json_encode([
+                    'message' => 'Task was updated successfully'
                 ])
             );
 

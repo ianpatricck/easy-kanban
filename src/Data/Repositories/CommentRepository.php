@@ -57,4 +57,10 @@ class CommentRepository
         $query = 'UPDATE comments SET body = ? WHERE id = ?';
         $this->dao->execute($query, [...get_object_vars($dto), $id]);
     }
+
+    public function delete(int $id): void
+    {
+        $query = 'DELETE FROM comments WHERE id = ?';
+        $this->dao->execute($query, [$id]);
+    }
 }

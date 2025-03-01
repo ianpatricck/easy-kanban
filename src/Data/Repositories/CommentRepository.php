@@ -4,6 +4,7 @@ namespace App\Data\Repositories;
 
 use App\Data\DAO;
 use App\DTO\CreateCommentDTO;
+use App\DTO\UpdateCommentDTO;
 use App\Entities\Comment;
 
 class CommentRepository
@@ -49,5 +50,11 @@ class CommentRepository
     {
         $query = 'INSERT INTO comments (body, owner, task) VALUES (?, ?, ?)';
         $this->dao->execute($query, get_object_vars($dto));
+    }
+
+    public function update(int $id, UpdateCommentDTO $dto): void
+    {
+        $query = 'UPDATE comments SET body = ? WHERE id = ?';
+        $this->dao->execute($query, [...get_object_vars($dto), $id]);
     }
 }

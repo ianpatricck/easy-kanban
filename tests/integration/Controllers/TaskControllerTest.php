@@ -154,9 +154,9 @@ final class TaskControllerTest extends TestCase
         ]);
 
         $tasksContents = json_decode($tasks->getBody()->getContents());
-        $lastCard = end($tasksContents);
+        $lastTask = end($tasksContents);
 
-        $this->assertSame($taskPayload['title'], $lastCard->title);
+        $this->assertSame($taskPayload['title'], $lastTask->title);
     }
 
     public function testThrowsAnUnauthorizedException(): void

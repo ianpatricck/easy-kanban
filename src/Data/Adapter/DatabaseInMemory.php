@@ -1,5 +1,9 @@
 <?php declare(strict_types=1);
 
+// |=======================================|
+// | Classe para conexão com o SQLite      |
+// |=======================================|
+
 namespace App\Data\Adapter;
 
 use App\Data\Adapter\BaseAdapter;

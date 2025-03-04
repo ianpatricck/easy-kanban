@@ -221,4 +221,29 @@ final class CommentControllerTest extends TestCase
         $this->assertSame('Comment was updated successfully', $updatedCommentContents->message);
         $this->assertSame(201, $updatedComment->getStatusCode());
     }
+
+    public function testShouldDeleteTheComment(): void
+    {
+        // Find two comments
+        $comments = self::$client->request('GET', '/api/comments?limit=2', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        $commentsContents = json_decode($comments->getBody()->getContents());
+        $lastComment = end($commentsContents);
+
+        // Delete the last comment
+        $deletedComment = self::$client->request('DELETE', "/api/comments/{$lastComment->id}", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        $deletedCommentContents = json_decode($deletedComment->getBody()->getContents());
+
+        $this->assertSame('Comment was deleted successfully', $deletedCommentContents->message);
+        $this->assertSame(201, $deletedComment->getStatusCode());
+    }
 }

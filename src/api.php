@@ -85,4 +85,5 @@ $app->group('/api', function ($api) use ($appContainer) {
     $api->get('/comments', [$commentController, 'findMany'])->add($userAuthorizedMiddleware);
     $api->post('/comments/create', [$commentController, 'create'])->add($userAuthorizedMiddleware);
     $api->patch('/comments/{id}', [$commentController, 'update'])->add($userAuthorizedMiddleware);
+    $api->delete('/comments/{id}', [$commentController, 'delete'])->add($userAuthorizedMiddleware);
 });

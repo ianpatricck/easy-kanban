@@ -1,5 +1,9 @@
 <?php declare(strict_types=1);
 
+// |=====================================================|
+// | Entidade que representa um quadro e seus atributos  |
+// |=====================================================|
+
 namespace App\Entities;
 
 class Board

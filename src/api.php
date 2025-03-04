@@ -6,6 +6,7 @@
 
 use App\Controllers\BoardController;
 use App\Controllers\CardController;
+use App\Controllers\CommentController;
 use App\Controllers\TaskController;
 use App\Controllers\UserController;
 use App\Middlewares\UserAuthorizedMiddleware;
@@ -25,6 +26,7 @@ $app->group('/api', function ($api) use ($appContainer) {
     $boardController = $appContainer->get(BoardController::class);
     $cardController = $appContainer->get(CardController::class);
     $taskController = $appContainer->get(TaskController::class);
+    $commentController = $appContainer->get(CommentController::class);
 
     /*
      * Middleware para verificar a autenticidade do usuário.
@@ -77,4 +79,9 @@ $app->group('/api', function ($api) use ($appContainer) {
     $api->post('/tasks/create', [$taskController, 'create'])->add($userAuthorizedMiddleware);
     $api->put('/tasks/{id}', [$taskController, 'update'])->add($userAuthorizedMiddleware);
     $api->delete('/tasks/{id}', [$taskController, 'delete'])->add($userAuthorizedMiddleware);
+
+    // Comments
+    $api->get('/comments/{id}', [$commentController, 'findOne'])->add($userAuthorizedMiddleware);
+    $api->get('/comments', [$commentController, 'findMany'])->add($userAuthorizedMiddleware);
+    $api->post('/comments/create', [$commentController, 'create'])->add($userAuthorizedMiddleware);
 });

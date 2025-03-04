@@ -9,6 +9,7 @@ namespace App\Controllers;
 use App\DTO\CreateCommentDTO;
 use App\DTO\UpdateCommentDTO;
 use App\Usecases\Comment\CreateCommentUsecase;
+use App\Usecases\Comment\DeleteCommentUsecase;
 use App\Usecases\Comment\FindCommentUsecase;
 use App\Usecases\Comment\FindManyCommentUsecase;
 use App\Usecases\Comment\UpdateCommentUsecase;
@@ -27,6 +28,7 @@ class CommentController
         private FindManyCommentUsecase $findManyCommentUsecase,
         private CreateCommentUsecase $createCommentUsecase,
         private UpdateCommentUsecase $updateCommentUsecase,
+        private DeleteCommentUsecase $deleteCommentUsecase,
     ) {}
 
     /*
@@ -176,6 +178,47 @@ class CommentController
             $response->getBody()->write(
                 json_encode([
                     'message' => 'Comment was updated successfully'
+                ])
+            );
+
+            return $response->withStatus(201);
+        } catch (Exception $exception) {
+            $response->getBody()->write(
+                json_encode([
+                    'message' => $exception->getMessage()
+                ])
+            );
+
+            return $response->withStatus($exception->getCode());
+        }
+    }
+
+    /*
+     * Método para deletar um comentário
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     *
+     * return Response
+     */
+    public function delete(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $authorizedUser = isAuthorizedUser($request->getHeaderLine('Authorization'));
+            $commentId = (int) $args['id'];
+
+            $taskEntity = $this->findCommentUsecase->execute($commentId);
+
+            if ($authorizedUser->id !== $taskEntity->getOwner()) {
+                throw new Exception('User unauthorized', 401);
+            }
+
+            $this->deleteCommentUsecase->execute($commentId);
+
+            $response->getBody()->write(
+                json_encode([
+                    'message' => 'Comment was deleted successfully'
                 ])
             );
 

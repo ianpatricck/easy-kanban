@@ -175,7 +175,6 @@ final class CommentControllerTest extends TestCase
 
     public function testShouldCreateOneComment(): void
     {
-        // Create a comment
         $commentPayload = [
             'body' => 'This is a random comment',
             'owner' => self::$ownerId,
@@ -193,5 +192,33 @@ final class CommentControllerTest extends TestCase
 
         $this->assertSame('Comment was created successfully', $createdCommentContents->message);
         $this->assertSame(201, $createdComment->getStatusCode());
+    }
+
+    public function testShouldUpdateTheComment(): void
+    {
+        // Find two comments
+        $comments = self::$client->request('GET', '/api/comments?limit=2', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        $commentsContents = json_decode($comments->getBody()->getContents());
+        $lastComment = end($commentsContents);
+
+        // Update the last comment
+        $commentPayload = ['body' => 'Comment was updated'];
+
+        $updatedComment = self::$client->request('PATCH', "/api/comments/{$lastComment->id}", [
+            'json' => $commentPayload,
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::$authToken
+            ]
+        ]);
+
+        $updatedCommentContents = json_decode($updatedComment->getBody()->getContents());
+
+        $this->assertSame('Comment was updated successfully', $updatedCommentContents->message);
+        $this->assertSame(201, $updatedComment->getStatusCode());
     }
 }

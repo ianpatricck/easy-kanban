@@ -1,5 +1,9 @@
 <?php declare(strict_types=1);
 
+// |=======================================================|
+// | Caso de uso para atualização de email de um usuário   |
+// |=======================================================|
+
 namespace App\Usecases\User;
 
 use App\Data\Repositories\UserRepository;

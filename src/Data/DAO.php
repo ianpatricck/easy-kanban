@@ -1,5 +1,10 @@
 <?php declare(strict_types=1);
 
+// |===========================================================|
+// | Data Access Object - Padrão para generalizar as consultas |
+// | ao banco de dados                                         |
+// |===========================================================|
+
 namespace App\Data;
 
 use App\Data\Adapter\DatabaseInMemory;

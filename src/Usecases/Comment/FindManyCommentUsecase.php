@@ -1,5 +1,9 @@
 <?php declare(strict_types=1);
 
+// |==============================================|
+// | Caso de uso para resgatar muitos comentários |
+// |==============================================|
+
 namespace App\Usecases\Comment;
 
 use App\Data\Repositories\CommentRepository;

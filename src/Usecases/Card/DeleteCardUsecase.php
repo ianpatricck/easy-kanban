@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 // |============================================|
-// | Caso de uso para exclusão de um comentário |
+// | Caso de uso para exclusão de um cartão     |
 // |============================================|
 
 namespace App\Usecases\Card;

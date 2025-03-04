@@ -1,11 +1,14 @@
 <?php declare(strict_types=1);
 
+// |===============================================|
+// | Caso de uso para atualização de um comentário |
+// |===============================================|
+
 namespace App\Usecases\Comment;
 
 use App\Data\Repositories\CommentRepository;
 use App\Data\Repositories\TaskRepository;
 use App\Data\Repositories\UserRepository;
-use App\DTO\CreateCommentDTO;
 use App\DTO\UpdateCommentDTO;
 use Exception;
 

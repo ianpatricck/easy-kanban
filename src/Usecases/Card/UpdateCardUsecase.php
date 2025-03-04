@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 // |===============================================|
-// | Caso de uso para atualização de um comentário |
+// | Caso de uso para atualização de um cartão     |
 // |===============================================|
 
 namespace App\Usecases\Card;

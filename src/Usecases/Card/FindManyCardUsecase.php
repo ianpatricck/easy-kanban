@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 // |==============================================|
-// | Caso de uso para resgatar muitos comentários |
+// | Caso de uso para resgatar muitos cartões     |
 // |==============================================|
 
 namespace App\Usecases\Card;

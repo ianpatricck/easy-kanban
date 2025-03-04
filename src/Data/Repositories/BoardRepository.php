@@ -1,5 +1,9 @@
 <?php declare(strict_types=1);
 
+// |=====================================================|
+// | Repositório de quadros para persistência de dados   |
+// |=====================================================|
+
 namespace App\Data\Repositories;
 
 use App\Data\DAO;

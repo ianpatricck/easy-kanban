@@ -1,5 +1,9 @@
 <?php declare(strict_types=1);
 
+// |========================================|
+// | Caso de uso para exclusão de um quadro |
+// |========================================|
+
 namespace App\Usecases\Board;
 
 use App\Data\Repositories\BoardRepository;

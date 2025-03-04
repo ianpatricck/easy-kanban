@@ -1,5 +1,9 @@
 <?php declare(strict_types=1);
 
+// |===============================================|
+// | Caso de uso para atualização de um comentário |
+// |===============================================|
+
 namespace App\Usecases\Card;
 
 use App\Data\Repositories\CardRepository;

@@ -7,9 +7,11 @@
 namespace App\Controllers;
 
 use App\DTO\CreateCommentDTO;
+use App\DTO\UpdateCommentDTO;
 use App\Usecases\Comment\CreateCommentUsecase;
 use App\Usecases\Comment\FindCommentUsecase;
 use App\Usecases\Comment\FindManyCommentUsecase;
+use App\Usecases\Comment\UpdateCommentUsecase;
 use App\Usecases\User\AuthorizeUserUsecase;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -24,6 +26,7 @@ class CommentController
         private FindCommentUsecase $findCommentUsecase,
         private FindManyCommentUsecase $findManyCommentUsecase,
         private CreateCommentUsecase $createCommentUsecase,
+        private UpdateCommentUsecase $updateCommentUsecase,
     ) {}
 
     /*
@@ -129,6 +132,50 @@ class CommentController
             $response->getBody()->write(
                 json_encode([
                     'message' => 'Comment was created successfully'
+                ])
+            );
+
+            return $response->withStatus(201);
+        } catch (Exception $exception) {
+            $response->getBody()->write(
+                json_encode([
+                    'message' => $exception->getMessage()
+                ])
+            );
+
+            return $response->withStatus($exception->getCode());
+        }
+    }
+
+    /*
+     * Método para atualizar um comentário
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     *
+     * return Response
+     */
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $authorizedUser = isAuthorizedUser($request->getHeaderLine('Authorization'));
+
+            $commentId = (int) $args['id'];
+            $body = $request->getParsedBody();
+
+            $comment = $this->findCommentUsecase->execute($commentId);
+
+            if ($authorizedUser->id !== $comment->getOwner()) {
+                throw new Exception('User unauthorized', 401);
+            }
+
+            $updateCommentDTO = new UpdateCommentDTO(...$body);
+            $this->updateCommentUsecase->execute($commentId, $updateCommentDTO);
+
+            $response->getBody()->write(
+                json_encode([
+                    'message' => 'Comment was updated successfully'
                 ])
             );
 

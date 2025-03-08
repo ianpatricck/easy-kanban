@@ -4,3 +4,4 @@ node_modules/
 .phpunit.result.cache
 development.db
 .env
+swagger.json

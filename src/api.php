@@ -14,7 +14,6 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Factory\ResponseFactory;
-use Slim\Views\Twig;
 
 /*
  * Grupo de rotas da API.
@@ -22,18 +21,6 @@ use Slim\Views\Twig;
  * @return void
  */
 $app->group('/api', function ($api) use ($appContainer) {
-    // Swagger API documentation
-    $api->get('/swagger', function ($request, $response) {
-        $view = Twig::fromRequest($request);
-        return $view->render($response, 'swagger.html.twig');
-    });
-
-    $api->get('/swagger-json', function ($request, $response) {
-        $swaggerJson = file_get_contents(__DIR__ . '/swagger.json');
-        $response->getBody()->write($swaggerJson);
-        return $response->withStatus(200);
-    });
-
     // Controllers
     $userController = $appContainer->get(UserController::class);
     $boardController = $appContainer->get(BoardController::class);

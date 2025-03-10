@@ -30,6 +30,18 @@ $appContainer = $appContainerBuilder->build();
 $twig = Twig::create(__DIR__ . '/', ['cache' => false]);
 $app->add(TwigMiddleware::create($app, $twig));
 
+// Swagger API documentation
+$app->get('/', function ($request, $response) {
+    $view = Twig::fromRequest($request);
+    return $view->render($response, 'swagger.html.twig');
+});
+
+$app->get('/swagger-json', function ($request, $response) {
+    $swaggerJson = file_get_contents(__DIR__ . '/swagger.json');
+    $response->getBody()->write($swaggerJson);
+    return $response->withStatus(200);
+});
+
 require __DIR__ . '/api.php';
 
 $app->run();

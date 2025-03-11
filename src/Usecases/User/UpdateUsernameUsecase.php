@@ -7,6 +7,7 @@
 namespace App\Usecases\User;
 
 use App\Data\Repositories\UserRepository;
+use Exception;
 
 class UpdateUsernameUsecase
 {
@@ -14,20 +15,31 @@ class UpdateUsernameUsecase
         protected UserRepository $userRepository
     ) {}
 
-    public function execute(string $currentUsername, string $newUsername): void
+    public function execute(string|int $by, string $newUsername): void
     {
         $validateUsernameRegex = '/^[0-9]|[\W]/i';
 
         if (preg_match($validateUsernameRegex, $newUsername)) {
-            throw new \InvalidArgumentException($newUsername . ' is not a valid username', 400);
+            throw new Exception($newUsername . ' is not a valid username', 400);
         }
 
-        $user = $this->userRepository->findOneByUsername($newUsername);
+        $user = null;
+        $id = (int) $by;
 
-        if ($user) {
-            throw new \Exception($newUsername . ' is already in use', 400);
+        if ($id) {
+            $user = $this->userRepository->findOneById($id);
+        } else if (gettype($by) == 'string') {
+            $user = $this->userRepository->findOneByUsername($by);
         }
 
-        $this->userRepository->updateUsername($currentUsername, $newUsername);
+        if (!$user) {
+            throw new Exception('User not found', 404);
+        }
+
+        if ($newUsername == $user->getUsername()) {
+            throw new Exception($newUsername . ' is already in use', 400);
+        }
+
+        $this->userRepository->updateUsername($user->getId(), $newUsername);
     }
 }

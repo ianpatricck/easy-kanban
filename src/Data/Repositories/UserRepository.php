@@ -72,10 +72,10 @@ class UserRepository
         return null;
     }
 
-    public function updateUsername(string $currentUsername, string $newUsername): void
+    public function updateUsername(int $id, string $newUsername): void
     {
-        $query = 'UPDATE users SET username = ? WHERE username = ?';
-        $this->dao->execute($query, [$newUsername, $currentUsername]);
+        $query = 'UPDATE users SET username = ? WHERE id = ?';
+        $this->dao->execute($query, [$newUsername, $id]);
     }
 
     public function updateName(int $id, string $newName): void

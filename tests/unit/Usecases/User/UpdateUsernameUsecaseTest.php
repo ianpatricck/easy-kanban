@@ -41,7 +41,7 @@ final class UpdateUsernameUsecaseTest extends TestCase
         $currentUsername = 'guest';
         $newUsername = 'mynewusername12~@';
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage($newUsername . ' is not a valid username');
         $this->expectExceptionCode(400);
 
@@ -55,7 +55,7 @@ final class UpdateUsernameUsecaseTest extends TestCase
 
         $username = 'guest';
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage($username . ' is already in use');
         $this->expectExceptionCode(400);
 

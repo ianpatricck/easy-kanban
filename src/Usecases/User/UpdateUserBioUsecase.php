@@ -18,9 +18,10 @@ class UpdateUserBioUsecase
     public function execute(string|int $by, string $bio): void
     {
         $user = null;
+        $id = (int) $by;
 
-        if (gettype($by) == 'int') {
-            $user = $this->userRepository->findOneById($by);
+        if ($id) {
+            $user = $this->userRepository->findOneById($id);
         } else if (gettype($by) == 'string') {
             $user = $this->userRepository->findOneByUsername($by);
         }
@@ -29,6 +30,6 @@ class UpdateUserBioUsecase
             throw new Exception('User not found', 404);
         }
 
-        $this->userRepository->updateDescription($by, $bio);
+        $this->userRepository->updateDescription($user->getId(), $bio);
     }
 }

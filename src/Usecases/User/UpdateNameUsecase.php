@@ -15,7 +15,7 @@ class UpdateNameUsecase
         protected UserRepository $userRepository
     ) {}
 
-    public function execute(string $username, string $newName): void
+    public function execute(string|int $by, string $newName): void
     {
         $validateNameRegex = '/^[a-zA-ZÀ-Úà-ú ]+$/i';
 
@@ -23,6 +23,19 @@ class UpdateNameUsecase
             throw new Exception($newName . ' is not a valid name', 400);
         }
 
-        $this->userRepository->updateName($username, $newName);
+        $user = null;
+        $id = (int) $by;
+
+        if ($id) {
+            $user = $this->userRepository->findOneById($id);
+        } else if (gettype($by) == 'string') {
+            $user = $this->userRepository->findOneByUsername($by);
+        }
+
+        if (!$user) {
+            throw new Exception('User not found', 404);
+        }
+
+        $this->userRepository->updateName($user->getId(), $newName);
     }
 }

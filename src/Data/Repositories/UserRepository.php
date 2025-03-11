@@ -96,10 +96,10 @@ class UserRepository
         $this->dao->execute($query, [$newPassword, $id]);
     }
 
-    public function updateDescription(string $username, string $bio): void
+    public function updateDescription(int $id, string $bio): void
     {
-        $query = 'UPDATE users SET bio = ? WHERE username = ?';
-        $this->dao->execute($query, [$bio, $username]);
+        $query = 'UPDATE users SET bio = ? WHERE id = ?';
+        $this->dao->execute($query, [$bio, $id]);
     }
 
     public function delete(int $id): void

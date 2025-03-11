@@ -22,9 +22,10 @@ class UpdatePasswordUsecase
         }
 
         $user = null;
+        $id = (int) ($by);
 
-        if (gettype($by) == 'int') {
-            $user = $this->userRepository->findOneById($by);
+        if ($id) {
+            $user = $this->userRepository->findOneById($id);
         } else if (gettype($by) == 'string') {
             $user = $this->userRepository->findOneByUsername($by);
         }

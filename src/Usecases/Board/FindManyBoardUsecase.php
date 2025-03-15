@@ -14,7 +14,7 @@ class FindManyBoardUsecase
         protected BoardRepository $boardRepository
     ) {}
 
-    public function execute(int $limit): array|null
+    public function execute(int $limit = null): array|null
     {
         return $this->boardRepository->findMany($limit);
     }

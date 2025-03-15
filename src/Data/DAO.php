@@ -38,13 +38,16 @@ class DAO extends DatabaseInMemory
         return $result;
     }
 
-    public function fetchMany(string $query, array $values): bool|array
+    public function fetchMany(string $query, array $values = []): bool|array
     {
         $this->startConnection();
 
         $stmt = $this->connection->prepare($query);
-        for ($index = 1; $index <= count($values); $index++) {
-            $stmt->bindValue($index, $values[$index - 1]);
+
+        if (!empty($values)) {
+            for ($index = 1; $index <= count($values); $index++) {
+                $stmt->bindValue($index, $values[$index - 1]);
+            }
         }
 
         $stmt->execute();

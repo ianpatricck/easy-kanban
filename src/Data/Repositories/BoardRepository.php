@@ -37,10 +37,15 @@ class BoardRepository
         return null;
     }
 
-    public function findMany(int $limit): array|null
+    public function findMany(int $limit = null): array|null
     {
-        $query = 'SELECT * FROM boards LIMIT ?';
-        $boards = $this->dao->fetchMany($query, [$limit]);
+        $boards = [];
+
+        if ($limit) {
+            $boards = $this->dao->fetchMany('SELECT * FROM boards LIMIT ?', [$limit]);
+        } else {
+            $boards = $this->dao->fetchMany('SELECT * FROM boards');
+        }
 
         if (!empty($boards)) {
             $boardEntities = [];

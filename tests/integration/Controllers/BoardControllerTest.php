@@ -212,11 +212,12 @@ final class BoardControllerTest extends TestCase
 
         // Update the board
         $updateBoardPayload = [
-            'My updated board',
-            'This is a updated boards'
+            'name' => 'My updated board',
+            'owner' => $owner->id,
+            'description' => 'This is a updated board'
         ];
 
-        $updated = static::$client->request('PUT', "/api/boards/{$lastBoard->id}/{$owner->id}", [
+        $updated = static::$client->request('PUT', "/api/boards/{$lastBoard->id}", [
             'json' => $updateBoardPayload,
             'headers' => [
                 'Authorization' => 'Bearer ' . static::$authToken

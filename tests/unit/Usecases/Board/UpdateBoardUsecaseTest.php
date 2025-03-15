@@ -90,6 +90,7 @@ final class UpdateBoardUsecaseTest extends TestCase
 
         $input = new UpdateBoardDTO(
             name: '',
+            owner: self::$user->getId(),
             description: 'My board description'
         );
 
@@ -109,6 +110,7 @@ final class UpdateBoardUsecaseTest extends TestCase
         $owner = self::$board->getOwner() + 5;
         $input = new UpdateBoardDTO(
             name: 'New board name',
+            owner: self::$user->getId(),
             description: 'My board description'
         );
 
@@ -128,6 +130,7 @@ final class UpdateBoardUsecaseTest extends TestCase
         $owner = self::$board->getOwner();
         $input = new UpdateBoardDTO(
             name: 'New board name',
+            owner: self::$user->getId(),
             description: 'My board description'
         );
 
@@ -150,6 +153,7 @@ final class UpdateBoardUsecaseTest extends TestCase
         $owner = self::$board->getOwner();
         $input = new UpdateBoardDTO(
             name: 'Updated board name',
+            owner: self::$user->getId(),
             description: 'My board description'
         );
 

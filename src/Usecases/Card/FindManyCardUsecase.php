@@ -15,8 +15,9 @@ class FindManyCardUsecase
         private CardRepository $cardRepository
     ) {}
 
-    public function execute(int $limit): array
+    public function execute(array $params = []): array
     {
+        $limit = !empty($params) && $params['limit'] ? (int) $params['limit'] : null;
         $cards = $this->cardRepository->findMany($limit);
 
         if (empty($cards)) {

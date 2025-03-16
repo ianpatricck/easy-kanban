@@ -79,15 +79,15 @@ class BoardController
             $boardsResponse = [];
 
             foreach ($boards as $board) {
-                $boardsResponse[] = [
-                    'id' => $board->getId(),
-                    'name' => $board->getName(),
-                    'description' => $board->getDescription(),
-                    'active_users' => $board->getActiveUsers(),
-                    'owner' => $board->getOwner(),
-                    'created_at' => $board->getCreatedAt(),
-                    'updated_at' => $board->getUpdatedAt(),
-                ];
+                $boardsResponse[] = new BoardResponseDTO(
+                    id: $board->getId(),
+                    name: $board->getName(),
+                    description: $board->getDescription(),
+                    active_users: $board->getActiveUsers(),
+                    owner: $board->getOwner(),
+                    created_at: $board->getCreatedAt(),
+                    updated_at: $board->getUpdatedAt(),
+                );
             }
 
             $response->getBody()->write(json_encode($boardsResponse));

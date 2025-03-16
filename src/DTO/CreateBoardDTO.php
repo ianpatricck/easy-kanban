@@ -9,7 +9,7 @@ namespace App\DTO;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    title: 'CreateBordDTO',
+    title: 'CreateBoardDTO',
     description: 'Create a board'
 )]
 class CreateBoardDTO

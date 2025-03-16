@@ -178,7 +178,7 @@ final class BoardControllerTest extends TestCase
 
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('User unauthorized');
-        $this->expectExceptionCode(400);
+        $this->expectExceptionCode(401);
 
         static::$client->request('POST', '/api/boards/create', [
             'json' => $boardPayload,

@@ -137,7 +137,7 @@ class BoardController
             $body = $request->getParsedBody();
 
             if ($authorizedUser->id !== $body['owner']) {
-                throw new Exception('User unauthorized', 400);
+                throw new Exception('User unauthorized', 401);
             }
 
             $createBoardDTO = new CreateBoardDTO(...$body);

@@ -72,7 +72,7 @@ final class CreateCommentUsecaseTest extends TestCase
         // Fetch the last board
         $findManyBoardUsecase = $container->get(FindManyBoardUsecase::class);
 
-        $boards = $findManyBoardUsecase->execute(limit: 2);
+        $boards = $findManyBoardUsecase->execute();
         $board = end($boards);
 
         self::$board = new Board(

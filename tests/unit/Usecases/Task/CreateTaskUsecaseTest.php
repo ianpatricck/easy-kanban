@@ -68,7 +68,7 @@ final class CreateTaskUsecaseTest extends TestCase
         $findManyBoardContainer = new DI\Container();
         $findManyBoardUsecase = $findManyBoardContainer->get(FindManyBoardUsecase::class);
 
-        $boards = $findManyBoardUsecase->execute(limit: 2);
+        $boards = $findManyBoardUsecase->execute();
         $board = end($boards);
 
         self::$board = new Board(

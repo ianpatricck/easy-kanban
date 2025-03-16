@@ -99,7 +99,7 @@ final class CreateCommentUsecaseTest extends TestCase
         // Fetch the last card
         $findManyCardUsecase = $container->get(FindManyCardUsecase::class);
 
-        $cards = $findManyCardUsecase->execute(limit: 2);
+        $cards = $findManyCardUsecase->execute();
         $card = end($cards);
 
         self::$card = new Card(

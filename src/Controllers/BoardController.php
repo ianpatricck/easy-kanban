@@ -6,6 +6,7 @@
 
 namespace App\Controllers;
 
+use App\DTO\BoardResponseDTO;
 use App\DTO\CreateBoardDTO;
 use App\DTO\UpdateBoardDTO;
 use App\Usecases\Board\CreateBoardUsecase;
@@ -14,6 +15,7 @@ use App\Usecases\Board\FindBoardUsecase;
 use App\Usecases\Board\FindManyBoardUsecase;
 use App\Usecases\Board\UpdateBoardUsecase;
 use App\Usecases\User\AuthorizeUserUsecase;
+use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Exception;
@@ -32,18 +34,48 @@ class BoardController
     ) {}
 
     /*
-     * Método que retorna vários quadros por um limite definido
+     * Método que retorna vários quadros por um limite definido ou sem nenhum
      *
      * @param Request $request
      * @param Response $response
      *
      * return Response
      */
-    public function findMany(Request $request, Response $response, array $args): Response
+
+    #[OA\Get(
+        path: '/api/boards',
+        tags: ['Board'],
+        summary: 'Find boards',
+        description: 'Get boards',
+        operationId: 'findManyBoards',
+        parameters: [
+            new OA\Parameter(
+                name: 'limit',
+                in: 'query',
+                description: 'limit value that needed to be considered for filter boards',
+                required: false,
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'OK',
+                content: [
+                    new OA\JsonContent(
+                        type: 'array',
+                        items: new OA\Items(
+                            ref: BoardResponseDTO::class
+                        )
+                    )
+                ]
+            )
+        ],
+    )]
+    public function findMany(Request $request, Response $response): Response
     {
         try {
-            $limit = (int) $request->getQueryParams()['limit'];
-            $boards = $this->findManyBoardUsecase->execute($limit);
+            $params = $request->getQueryParams();
+            $boards = $this->findManyBoardUsecase->execute($params);
             $boardsResponse = [];
 
             foreach ($boards as $board) {
@@ -79,6 +111,25 @@ class BoardController
      *
      * return Response
      */
+
+    #[OA\Post(
+        path: '/api/boards/create',
+        tags: ['Board'],
+        summary: 'Create a new board',
+        description: 'This create a new board in the application',
+        operationId: 'createBoard',
+        responses: [
+            new OA\Response(response: 201, description: 'Board was created successfully'),
+            new OA\Response(response: 400, description: 'Something was wrong'),
+        ],
+        requestBody: new OA\RequestBody(
+            description: 'Create a board',
+            required: true,
+            content: new OA\JsonContent(
+                ref: CreateBoardDTO::class
+            )
+        )
+    )]
     public function create(Request $request, Response $response): Response
     {
         try {
@@ -118,14 +169,42 @@ class BoardController
      *
      * return Response
      */
+
+    #[OA\Put(
+        path: '/api/boards/{id}',
+        tags: ['Board'],
+        summary: 'Update a board',
+        description: 'This update a board in the application',
+        operationId: 'updateBoard',
+        parameters: [
+            new OA\PathParameter(
+                name: 'id',
+                description: 'board id',
+                required: true,
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 201, description: 'Board was updated successfully'),
+            new OA\Response(response: 400, description: 'Something was wrong'),
+            new OA\Response(response: 404, description: 'Board not found'),
+        ],
+        requestBody: new OA\RequestBody(
+            description: 'Update a board',
+            required: true,
+            content: new OA\JsonContent(
+                ref: UpdateBoardDTO::class
+            )
+        )
+    )]
     public function update(Request $request, Response $response, array $args): Response
     {
         try {
             $authorizedUser = isAuthorizedUser($request->getHeaderLine('Authorization'));
 
             $boardId = (int) $args['id'];
-            $owner = (int) $args['ownerId'];
+
             $body = $request->getParsedBody();
+            $owner = $body['owner'];
 
             if ($authorizedUser->id != $owner) {
                 throw new Exception('User unauthorized', 400);
@@ -160,6 +239,26 @@ class BoardController
      *
      * return Response
      */
+
+    #[OA\Delete(
+        path: '/api/boards/{id}',
+        tags: ['Board'],
+        summary: 'Delete a board',
+        description: 'This delete a board in the application',
+        operationId: 'deleteBoard',
+        parameters: [
+            new OA\PathParameter(
+                name: 'id',
+                description: 'board id',
+                required: true,
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 201, description: 'Board was deleted successfully'),
+            new OA\Response(response: 400, description: 'Something was wrong'),
+            new OA\Response(response: 404, description: 'Board not found'),
+        ],
+    )]
     public function delete(Request $request, Response $response, array $args): Response
     {
         try {

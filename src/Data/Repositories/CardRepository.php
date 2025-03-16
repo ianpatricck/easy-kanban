@@ -31,10 +31,15 @@ class CardRepository
         return null;
     }
 
-    public function findMany(int $limit): array
+    public function findMany(int $limit = null): array
     {
-        $query = 'SELECT * FROM cards LIMIT ?';
-        $cards = $this->dao->fetchMany($query, [$limit]);
+        $cards = [];
+
+        if ($limit) {
+            $cards = $this->dao->fetchMany('SELECT * FROM cards LIMIT ?', [$limit]);
+        } else {
+            $cards = $this->dao->fetchMany('SELECT * FROM cards');
+        }
 
         if (!empty($cards)) {
             $cardsEntities = [];

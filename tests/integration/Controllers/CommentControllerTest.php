@@ -26,7 +26,6 @@ final class CommentControllerTest extends TestCase
         self::$client = new Client(
             [
                 'base_uri' => $_ENV['APP_URL'],
-                'timeout' => 2.0,
             ]
         );
 

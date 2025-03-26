@@ -12,6 +12,9 @@ final class CreateCardTable extends AbstractMigration
             $table->addColumn('name', 'string', ['limit' => 100, 'null' => false]);
             $table->addColumn('hex_bgcolor', 'string', ['limit' => 12]);
             $table
+                ->addColumn('owner', 'integer', ['null' => false])
+                ->addForeignKey('owner', 'users', 'id', ['delete' => 'CASCADE', 'update' => 'CASCADE']);
+            $table
                 ->addColumn('board', 'integer', ['null' => false])
                 ->addForeignKey('board', 'boards', 'id', ['delete' => 'CASCADE', 'update' => 'CASCADE']);
             $table->addColumn('created_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP']);

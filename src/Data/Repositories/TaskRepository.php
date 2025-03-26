@@ -31,10 +31,15 @@ class TaskRepository
         return null;
     }
 
-    public function findMany(int $limit): array
+    public function findMany(int $limit = null): array
     {
-        $query = 'SELECT * FROM tasks LIMIT ?';
-        $tasks = $this->dao->fetchMany($query, [$limit]);
+        $tasks = [];
+
+        if ($limit) {
+            $tasks = $this->dao->fetchMany('SELECT * FROM tasks LIMIT ?', [$limit]);
+        } else {
+            $tasks = $this->dao->fetchMany('SELECT * FROM tasks');
+        }
 
         if (!empty($tasks)) {
             $taskEntities = [];

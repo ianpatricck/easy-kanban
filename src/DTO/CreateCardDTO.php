@@ -10,7 +10,7 @@ use OpenApi\Attributes as OA;
 
 #[OA\Schema(
     title: 'CreateCardDTO',
-    description: 'Create a board'
+    description: 'Create a card'
 )]
 class CreateCardDTO
 {

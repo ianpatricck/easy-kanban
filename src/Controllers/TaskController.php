@@ -7,6 +7,7 @@
 namespace App\Controllers;
 
 use App\DTO\CreateTaskDTO;
+use App\DTO\TaskResponseDTO;
 use App\DTO\UpdateTaskDTO;
 use App\Usecases\Task\CreateTaskUsecase;
 use App\Usecases\Task\DeleteTaskUsecase;
@@ -14,6 +15,7 @@ use App\Usecases\Task\FindManyTaskUsecase;
 use App\Usecases\Task\FindTaskUsecase;
 use App\Usecases\Task\UpdateTaskUsecase;
 use App\Usecases\User\AuthorizeUserUsecase;
+use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Exception;
@@ -40,6 +42,29 @@ class TaskController
      *
      * return Response
      */
+
+    #[OA\Get(
+        path: '/api/tasks/{id}',
+        tags: ['Task'],
+        summary: 'Find one task',
+        description: 'Get tasks by id',
+        operationId: 'findTask',
+        parameters: [
+            new OA\PathParameter(
+                name: 'id',
+                description: 'task id',
+                required: true,
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'OK', content: [
+                new OA\JsonContent(
+                    ref: TaskResponseDTO::class
+                )
+            ]),
+            new OA\Response(response: 404, description: 'Task not found'),
+        ],
+    )]
     public function findOne(Request $request, Response $response, array $args): Response
     {
         try {
@@ -77,11 +102,41 @@ class TaskController
      *
      * return Response
      */
+
+    #[OA\Get(
+        path: '/api/tasks',
+        tags: ['Task'],
+        summary: 'Find tasks',
+        description: 'Get many tasks',
+        operationId: 'findManyTasks',
+        parameters: [
+            new OA\Parameter(
+                name: 'limit',
+                in: 'query',
+                description: 'limit value that needed to be considered for filter tasks',
+                required: false,
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'OK',
+                content: [
+                    new OA\JsonContent(
+                        type: 'array',
+                        items: new OA\Items(
+                            ref: TaskResponseDTO::class
+                        )
+                    )
+                ]
+            )
+        ],
+    )]
     public function findMany(Request $request, Response $response): Response
     {
         try {
-            $limit = (int) $request->getQueryParams()['limit'];
-            $tasks = $this->findManyTaskUsecase->execute($limit);
+            $params = $request->getQueryParams();
+            $tasks = $this->findManyTaskUsecase->execute($params);
             $tasksResponse = [];
 
             foreach ($tasks as $task) {
@@ -117,6 +172,26 @@ class TaskController
      *
      * return Response
      */
+
+    #[OA\Post(
+        path: '/api/tasks/create',
+        tags: ['Task'],
+        summary: 'Create a new task',
+        description: 'This create a new task in the application',
+        operationId: 'createTask',
+        responses: [
+            new OA\Response(response: 201, description: 'Task was created successfully'),
+            new OA\Response(response: 400, description: 'Something was wrong'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+        requestBody: new OA\RequestBody(
+            description: 'Create a task',
+            required: true,
+            content: new OA\JsonContent(
+                ref: CreateTaskDTO::class
+            )
+        )
+    )]
     public function create(Request $request, Response $response): Response
     {
         try {
@@ -160,6 +235,33 @@ class TaskController
      *
      * return Response
      */
+
+    #[OA\Put(
+        path: '/api/tasks/{id}',
+        tags: ['Task'],
+        summary: 'Update a task',
+        description: 'This update a task in the application',
+        operationId: 'updateTask',
+        parameters: [
+            new OA\PathParameter(
+                name: 'id',
+                description: 'task id',
+                required: true,
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 201, description: 'Task was updated successfully'),
+            new OA\Response(response: 400, description: 'Something was wrong'),
+            new OA\Response(response: 404, description: 'Task not found'),
+        ],
+        requestBody: new OA\RequestBody(
+            description: 'Update a task',
+            required: true,
+            content: new OA\JsonContent(
+                ref: UpdateTaskDTO::class
+            )
+        )
+    )]
     public function update(Request $request, Response $response, array $args): Response
     {
         try {
@@ -204,6 +306,26 @@ class TaskController
      *
      * return Response
      */
+
+    #[OA\Delete(
+        path: '/api/tasks/{id}',
+        tags: ['Task'],
+        summary: 'Delete a task',
+        description: 'This delete a task in the application',
+        operationId: 'deleteTask',
+        parameters: [
+            new OA\PathParameter(
+                name: 'id',
+                description: 'task id',
+                required: true,
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 201, description: 'Task was deleted successfully'),
+            new OA\Response(response: 400, description: 'Something was wrong'),
+            new OA\Response(response: 404, description: 'Task not found'),
+        ],
+    )]
     public function delete(Request $request, Response $response, array $args): Response
     {
         try {

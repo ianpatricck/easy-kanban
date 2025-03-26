@@ -35,6 +35,13 @@ class CardResponseDTO
         public string $hex_bgcolor,
 
         #[OA\Property(
+            title: 'owner',
+            format: 'int64',
+            example: 1,
+        )]
+        public int $owner,
+
+        #[OA\Property(
             title: 'board',
             format: 'int64',
             example: 1,

@@ -15,8 +15,9 @@ class FindManyTaskUsecase
         private TaskRepository $taskRepository,
     ) {}
 
-    public function execute(int $limit): array
+    public function execute(array $params = []): array
     {
+        $limit = !empty($params) && $params['limit'] ? (int) $params['limit'] : null;
         $tasks = $this->taskRepository->findMany($limit);
 
         if (empty($tasks)) {

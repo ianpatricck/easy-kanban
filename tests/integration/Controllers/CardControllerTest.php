@@ -102,6 +102,7 @@ final class CardControllerTest extends TestCase
             'name' => 'In development',
             'hex_bgcolor' => '#ffffff',
             'board' => $lastBoard->id,
+            'owner' => $lastBoard->owner, 
         ];
 
         $this->expectException(Exception::class);
@@ -133,6 +134,7 @@ final class CardControllerTest extends TestCase
             'name' => 'In development',
             'hex_bgcolor' => '#ffffff',
             'board' => $lastBoard->id,
+            'owner' => $lastBoard->owner, 
         ];
 
         $created = self::$client->request('POST', '/api/cards/create', [

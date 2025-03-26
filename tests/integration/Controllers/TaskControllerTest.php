@@ -89,6 +89,7 @@ final class TaskControllerTest extends TestCase
             'name' => 'In development',
             'hex_bgcolor' => '#ffffff',
             'board' => $lastBoard->id,
+            'owner' => $lastBoard->owner, 
         ];
 
         self::$client->request('POST', '/api/cards/create', [

@@ -90,6 +90,7 @@ final class CreateCardUsecaseTest extends TestCase
         $createCardDTO = new CreateCardDTO(
             name: '',
             hex_bgcolor: '',
+            owner: self::$user->getId(),
             board: self::$board->getId()
         );
 
@@ -108,6 +109,7 @@ final class CreateCardUsecaseTest extends TestCase
         $createCardDTO = new CreateCardDTO(
             name: 'In development',
             hex_bgcolor: '3433432134',
+            owner: self::$user->getId(),
             board: self::$board->getId()
         );
 
@@ -126,6 +128,7 @@ final class CreateCardUsecaseTest extends TestCase
         $createCardDTO = new CreateCardDTO(
             name: 'In development<2>',
             hex_bgcolor: '#887744',
+            owner: self::$user->getId(),
             board: self::$board->getId()
         );
 
@@ -144,6 +147,7 @@ final class CreateCardUsecaseTest extends TestCase
         $createCardDTO = new CreateCardDTO(
             name: 'In development',
             hex_bgcolor: '#887744',
+            owner: self::$user->getId(),
             board: self::$board->getId()
         );
 

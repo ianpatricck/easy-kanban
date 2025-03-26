@@ -86,6 +86,7 @@ final class DeleteCardUsecaseTest extends TestCase
         $createCardDTO = new CreateCardDTO(
             name: 'In development',
             hex_bgcolor: '#887744',
+            owner: self::$user->getId(),
             board: self::$board->getId()
         );
 
@@ -102,6 +103,7 @@ final class DeleteCardUsecaseTest extends TestCase
             id: $card->id,
             name: $card->name,
             hex_bgcolor: $card->hex_bgcolor,
+            owner: $card->owner,
             board: $card->board,
             created_at: $card->created_at,
             updated_at: $card->updated_at

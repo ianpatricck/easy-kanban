@@ -95,6 +95,7 @@ final class UpdateCommentUsecaseTest extends TestCase
         $createCardDTO = new CreateCardDTO(
             name: 'In development',
             hex_bgcolor: '#887744',
+            owner: self::$user->getId(),
             board: self::$board->getId()
         );
 
@@ -110,6 +111,7 @@ final class UpdateCommentUsecaseTest extends TestCase
             id: $card->getId(),
             name: $card->getName(),
             hex_bgcolor: $card->getHexBgColor(),
+            owner: self::$user->getId(),
             board: $card->getBoard(),
             created_at: $card->getCreatedAt(),
             updated_at: $card->getUpdatedAt(),

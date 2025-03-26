@@ -57,7 +57,7 @@ class CardRepository
 
     public function create(CreateCardDTO $dto): void
     {
-        $query = 'INSERT INTO cards (name, hex_bgcolor, board) VALUES (?, ?, ?)';
+        $query = 'INSERT INTO cards (name, hex_bgcolor, owner, board) VALUES (?, ?, ?, ?)';
         $this->dao->execute($query, get_object_vars($dto));
     }
 

@@ -6,6 +6,7 @@
 
 namespace App\Controllers;
 
+use App\DTO\CardResponseDTO;
 use App\DTO\CreateCardDTO;
 use App\DTO\UpdateCardDTO;
 use App\Usecases\Board\FindBoardUsecase;
@@ -15,6 +16,7 @@ use App\Usecases\Card\FindCardUsecase;
 use App\Usecases\Card\FindManyCardUsecase;
 use App\Usecases\Card\UpdateCardUsecase;
 use App\Usecases\User\AuthorizeUserUsecase;
+use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Exception;
@@ -42,20 +44,44 @@ class CardController
      *
      * return Response
      */
+
+    #[OA\Get(
+        path: '/api/cards/{id}',
+        tags: ['Card'],
+        summary: 'Find one card',
+        description: 'Get card by id',
+        operationId: 'findCard',
+        parameters: [
+            new OA\PathParameter(
+                name: 'by',
+                description: 'card id',
+                required: true,
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'OK', content: [
+                new OA\JsonContent(
+                    ref: CardResponseDTO::class
+                )
+            ]),
+            new OA\Response(response: 404, description: 'Card not found'),
+        ],
+    )]
     public function findOne(Request $request, Response $response, array $args): Response
     {
         try {
             $id = (int) $args['id'];
             $card = $this->findCardUsecase->execute($id);
 
-            $cardResponse = [
-                'id' => $card->getId(),
-                'name' => $card->getName(),
-                'hex_bgcolor' => $card->getHexBgColor(),
-                'board' => $card->getBoard(),
-                'created_at' => $card->getCreatedAt(),
-                'updated_at' => $card->getUpdatedAt(),
-            ];
+            $cardResponse = new CardResponseDTO(
+                id: $card->getId(),
+                name: $card->getName(),
+                hex_bgcolor: $card->getHexBgColor(),
+                owner: $card->getOwner(),
+                board: $card->getBoard(),
+                created_at: $card->getCreatedAt(),
+                updated_at: $card->getUpdatedAt(),
+            );
 
             $response->getBody()->write(json_encode($cardResponse));
             return $response->withStatus(200);
@@ -78,22 +104,54 @@ class CardController
      *
      * return Response
      */
+
+    #[OA\Get(
+        path: '/api/cards',
+        tags: ['Card'],
+        summary: 'Find cards',
+        description: 'Get many cards',
+        operationId: 'findManyCards',
+        parameters: [
+            new OA\Parameter(
+                name: 'limit',
+                in: 'query',
+                description: 'limit value that needed to be considered for filter cards',
+                required: false,
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'OK',
+                content: [
+                    new OA\JsonContent(
+                        type: 'array',
+                        items: new OA\Items(
+                            ref: CardResponseDTO::class
+                        )
+                    )
+                ]
+            )
+        ],
+    )]
     public function findMany(Request $request, Response $response): Response
     {
         try {
-            $limit = (int) $request->getQueryParams()['limit'];
-            $cards = $this->findManyCardUsecase->execute($limit);
+            $params = $request->getQueryParams();
+            $cards = $this->findManyCardUsecase->execute($params);
+
             $cardsResponse = [];
 
             foreach ($cards as $card) {
-                $cardsResponse[] = [
-                    'id' => $card->getId(),
-                    'name' => $card->getName(),
-                    'hex_bgcolor' => $card->getHexBgColor(),
-                    'board' => $card->getBoard(),
-                    'created_at' => $card->getCreatedAt(),
-                    'updated_at' => $card->getUpdatedAt(),
-                ];
+                $cardsResponse[] = new CardResponseDTO(
+                    id: $card->getId(),
+                    name: $card->getName(),
+                    hex_bgcolor: $card->getHexBgColor(),
+                    owner: $card->getOwner(),
+                    board: $card->getBoard(),
+                    created_at: $card->getCreatedAt(),
+                    updated_at: $card->getUpdatedAt(),
+                );
             }
 
             $response->getBody()->write(json_encode($cardsResponse));
@@ -117,6 +175,26 @@ class CardController
      *
      * return Response
      */
+
+    #[OA\Post(
+        path: '/api/cards/create',
+        tags: ['Card'],
+        summary: 'Create a new card',
+        description: 'This create a new card in the application',
+        operationId: 'createCard',
+        responses: [
+            new OA\Response(response: 201, description: 'Card was created successfully'),
+            new OA\Response(response: 400, description: 'Something was wrong'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+        requestBody: new OA\RequestBody(
+            description: 'Create a card',
+            required: true,
+            content: new OA\JsonContent(
+                ref: CreateCardDTO::class
+            )
+        )
+    )]
     public function create(Request $request, Response $response): Response
     {
         try {
@@ -162,6 +240,33 @@ class CardController
      *
      * return Response
      */
+
+    #[OA\Put(
+        path: '/api/cards/{id}',
+        tags: ['Card'],
+        summary: 'Update a card',
+        description: 'This update a card in the application',
+        operationId: 'updateCard',
+        parameters: [
+            new OA\PathParameter(
+                name: 'id',
+                description: 'card id',
+                required: true,
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 201, description: 'Card was updated successfully'),
+            new OA\Response(response: 400, description: 'Something was wrong'),
+            new OA\Response(response: 404, description: 'Card not found'),
+        ],
+        requestBody: new OA\RequestBody(
+            description: 'Update a card',
+            required: true,
+            content: new OA\JsonContent(
+                ref: UpdateCardDTO::class
+            )
+        )
+    )]
     public function update(Request $request, Response $response, array $args): Response
     {
         try {
@@ -207,6 +312,26 @@ class CardController
      *
      * return Response
      */
+
+    #[OA\Delete(
+        path: '/api/cards/{id}',
+        tags: ['Card'],
+        summary: 'Delete a card',
+        description: 'This delete a card in the application',
+        operationId: 'deleteCard',
+        parameters: [
+            new OA\PathParameter(
+                name: 'id',
+                description: 'card id',
+                required: true,
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 201, description: 'Card was deleted successfully'),
+            new OA\Response(response: 400, description: 'Something was wrong'),
+            new OA\Response(response: 404, description: 'Card not found'),
+        ],
+    )]
     public function delete(Request $request, Response $response, array $args): Response
     {
         try {

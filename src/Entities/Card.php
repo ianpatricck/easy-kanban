@@ -12,6 +12,7 @@ class Card
         private int $id,
         private string $name,
         private string $hex_bgcolor,
+        private int $owner,
         private int $board,
         private string $created_at,
         private string $updated_at,
@@ -30,6 +31,11 @@ class Card
     public function getHexBgcolor(): string
     {
         return $this->hex_bgcolor;
+    }
+
+    public function getOwner(): int
+    {
+        return $this->owner;
     }
 
     public function getBoard(): int

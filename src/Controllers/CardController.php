@@ -53,7 +53,7 @@ class CardController
         operationId: 'findCard',
         parameters: [
             new OA\PathParameter(
-                name: 'by',
+                name: 'id',
                 description: 'card id',
                 required: true,
             )

@@ -15,8 +15,9 @@ class FindManyCommentUsecase
         private CommentRepository $commentRepository,
     ) {}
 
-    public function execute(int $limit): array
+    public function execute(array $params = []): array
     {
+        $limit = !empty($params) && $params['limit'] ? (int) $params['limit'] : null;
         $comments = $this->commentRepository->findMany($limit);
 
         if (empty($comments)) {

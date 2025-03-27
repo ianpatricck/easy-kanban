@@ -31,10 +31,15 @@ class CommentRepository
         return null;
     }
 
-    public function findMany(int $limit): array
+    public function findMany(int $limit = null): array
     {
-        $query = 'SELECT * FROM comments LIMIT ?';
-        $comments = $this->dao->fetchMany($query, [$limit]);
+        $comments = [];
+
+        if ($limit) {
+            $comments = $this->dao->fetchMany('SELECT * FROM comments LIMIT ?', [$limit]);
+        } else {
+            $comments = $this->dao->fetchMany('SELECT * FROM comments');
+        }
 
         if (!empty($comments)) {
             $commentEntities = [];

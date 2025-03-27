@@ -151,7 +151,7 @@ final class DeleteCommentUsecaseTest extends TestCase
         // Find the comment
         $findManyCommentUsecase = $container->get(FindManyCommentUsecase::class);
 
-        $comments = $findManyCommentUsecase->execute(1);
+        $comments = $findManyCommentUsecase->execute();
         self::$comment = end($comments);
     }
 

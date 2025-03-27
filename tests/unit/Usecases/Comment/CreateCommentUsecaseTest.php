@@ -211,7 +211,7 @@ final class CreateCommentUsecaseTest extends TestCase
 
         $createCommentUsecase->execute($commentPayload);
 
-        $comments = $findManyCommentUsecase->execute(1);
+        $comments = $findManyCommentUsecase->execute();
         $lastComment = end($comments);
 
         $this->assertSame($commentPayload->body, $lastComment->getBody());

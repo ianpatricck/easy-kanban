@@ -244,7 +244,7 @@ final class CreateTaskUsecaseTest extends TestCase
 
         // Find the task
         $findManyTaskUsecase = $taskContainer->get(FindManyTaskUsecase::class);
-        $tasks = $findManyTaskUsecase->execute(2);
+        $tasks = $findManyTaskUsecase->execute();
 
         $lastTask = end($tasks);
 

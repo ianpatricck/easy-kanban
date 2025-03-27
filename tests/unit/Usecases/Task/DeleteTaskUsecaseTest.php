@@ -131,7 +131,7 @@ final class DeleteTaskUsecaseTest extends TestCase
 
         // Find the task
         $findManyTaskUsecase = $taskContainer->get(FindManyTaskUsecase::class);
-        $tasks = $findManyTaskUsecase->execute(2);
+        $tasks = $findManyTaskUsecase->execute();
 
         self::$task = end($tasks);
     }
@@ -170,6 +170,6 @@ final class DeleteTaskUsecaseTest extends TestCase
         $this->expectExceptionMessage('Tasks could not be found');
         $this->expectExceptionCode(404);
 
-        $findManyTaskUsecase->execute(1);
+        $findManyTaskUsecase->execute();
     }
 }

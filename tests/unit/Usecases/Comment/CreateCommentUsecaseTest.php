@@ -129,7 +129,7 @@ final class CreateCommentUsecaseTest extends TestCase
 
         // Find the task
         $findManyTaskUsecase = $container->get(FindManyTaskUsecase::class);
-        $tasks = $findManyTaskUsecase->execute(2);
+        $tasks = $findManyTaskUsecase->execute();
 
         self::$task = end($tasks);
     }

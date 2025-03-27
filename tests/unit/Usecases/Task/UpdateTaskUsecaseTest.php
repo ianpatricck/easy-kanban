@@ -132,7 +132,7 @@ final class UpdateTaskUsecaseTest extends TestCase
 
         // Find the task
         $findManyTaskUsecase = $taskContainer->get(FindManyTaskUsecase::class);
-        $tasks = $findManyTaskUsecase->execute(2);
+        $tasks = $findManyTaskUsecase->execute();
 
         self::$task = end($tasks);
     }
@@ -219,7 +219,7 @@ final class UpdateTaskUsecaseTest extends TestCase
 
         // Find the task
         $findManyTaskUsecase = $taskContainer->get(FindManyTaskUsecase::class);
-        $tasks = $findManyTaskUsecase->execute(2);
+        $tasks = $findManyTaskUsecase->execute();
         $lastTask = end($tasks);
 
         $this->assertSame($updateTaskPayload->title, $lastTask->getTitle());

@@ -6,6 +6,7 @@
 
 namespace App\Controllers;
 
+use App\DTO\CommentResponseDTO;
 use App\DTO\CreateCommentDTO;
 use App\DTO\UpdateCommentDTO;
 use App\Usecases\Comment\CreateCommentUsecase;
@@ -14,6 +15,7 @@ use App\Usecases\Comment\FindCommentUsecase;
 use App\Usecases\Comment\FindManyCommentUsecase;
 use App\Usecases\Comment\UpdateCommentUsecase;
 use App\Usecases\User\AuthorizeUserUsecase;
+use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Exception;
@@ -40,6 +42,29 @@ class CommentController
      *
      * return Response
      */
+
+    #[OA\Get(
+        path: '/api/comments/{id}',
+        tags: ['Comment'],
+        summary: 'Find one comment',
+        description: 'Get comments by id',
+        operationId: 'findComment',
+        parameters: [
+            new OA\PathParameter(
+                name: 'id',
+                description: 'comment id',
+                required: true,
+            )
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'OK', content: [
+                new OA\JsonContent(
+                    ref: CommentResponseDTO::class
+                )
+            ]),
+            new OA\Response(response: 404, description: 'Comment not found'),
+        ],
+    )]
     public function findOne(Request $request, Response $response, array $args): Response
     {
         try {
@@ -76,11 +101,41 @@ class CommentController
      *
      * return Response
      */
+
+    #[OA\Get(
+        path: '/api/comments',
+        tags: ['Comment'],
+        summary: 'Find comments',
+        description: 'Get many comments',
+        operationId: 'findManyComments',
+        parameters: [
+            new OA\Parameter(
+                name: 'limit',
+                in: 'query',
+                description: 'limit value that needed to be considered for filter comments',
+                required: false,
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'OK',
+                content: [
+                    new OA\JsonContent(
+                        type: 'array',
+                        items: new OA\Items(
+                            ref: CommentResponseDTO::class
+                        )
+                    )
+                ]
+            )
+        ],
+    )]
     public function findMany(Request $request, Response $response): Response
     {
         try {
-            $limit = (int) $request->getQueryParams()['limit'];
-            $comments = $this->findManyCommentUsecase->execute($limit);
+            $params = $request->getQueryParams();
+            $comments = $this->findManyCommentUsecase->execute($params);
             $commentsResponse = [];
 
             foreach ($comments as $comment) {
@@ -115,6 +170,26 @@ class CommentController
      *
      * return Response
      */
+
+    #[OA\Post(
+        path: '/api/comments/create',
+        tags: ['Comment'],
+        summary: 'Create a new comment',
+        description: 'This create a new comment in the application',
+        operationId: 'createComment',
+        responses: [
+            new OA\Response(response: 201, description: 'Comment was created successfully'),
+            new OA\Response(response: 400, description: 'Something was wrong'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+        requestBody: new OA\RequestBody(
+            description: 'Create a comment',
+            required: true,
+            content: new OA\JsonContent(
+                ref: CreateCommentDTO::class
+            )
+        )
+    )]
     public function create(Request $request, Response $response): Response
     {
         try {
@@ -158,6 +233,33 @@ class CommentController
      *
      * return Response
      */
+
+    #[OA\Patch(
+        path: '/api/comments/{id}',
+        tags: ['Comment'],
+        summary: 'Update a comment',
+        description: 'This update a comment in the application',
+        operationId: 'updateComment',
+        parameters: [
+            new OA\PathParameter(
+                name: 'id',
+                description: 'comment id',
+                required: true,
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 201, description: 'Comment was updated successfully'),
+            new OA\Response(response: 400, description: 'Something was wrong'),
+            new OA\Response(response: 404, description: 'Comment not found'),
+        ],
+        requestBody: new OA\RequestBody(
+            description: 'Update a comment',
+            required: true,
+            content: new OA\JsonContent(
+                ref: UpdateCommentDTO::class
+            )
+        )
+    )]
     public function update(Request $request, Response $response, array $args): Response
     {
         try {
@@ -202,6 +304,26 @@ class CommentController
      *
      * return Response
      */
+
+    #[OA\Delete(
+        path: '/api/comments/{id}',
+        tags: ['Comment'],
+        summary: 'Delete a comment',
+        description: 'This delete a comment in the application',
+        operationId: 'deleteComment',
+        parameters: [
+            new OA\PathParameter(
+                name: 'id',
+                description: 'comment id',
+                required: true,
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 201, description: 'Comment was deleted successfully'),
+            new OA\Response(response: 400, description: 'Something was wrong'),
+            new OA\Response(response: 404, description: 'Comment not found'),
+        ],
+    )]
     public function delete(Request $request, Response $response, array $args): Response
     {
         try {
